@@ -1,486 +1,931 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIFA World Cup 2026 — Live Stream</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7"></script>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script>
-tailwind.config={theme:{extend:{fontFamily:{display:['Oswald','sans-serif'],body:['DM Sans','sans-serif']}}}}
-</script>
-<style>
-:root{--bg:#07070c;--bg2:#0e0e17;--card:#14141f;--cardH:#1b1b28;--brd:#222235;--brdL:#2e2e45;--fg:#eeeef3;--fg2:#9e9eb8;--fg3:#5c5c78;--gold:#d4a74f;--goldD:rgba(212,167,79,.12);--goldH:#e6bc65;--red:#e63946;--redD:rgba(230,57,70,.12);--grn:#22c55e}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:'DM Sans',sans-serif;overflow-x:hidden}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--brdL);border-radius:3px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoBypass Player</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090b;
+      --surface: #141416;
+      --card: #1c1c1f;
+      --border: #2a2a2e;
+      --border-light: #3f3f46;
+      --fg: #fafafa;
+      --muted: #a1a1aa;
+      --dim: #71717a;
+      --accent: #f97316;
+      --accent-hover: #fb923c;
+      --accent-dim: rgba(249,115,22,0.12);
+      --danger: #ef4444;
+      --success: #22c55e;
+    }
 
-.bg-atmo{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 60% 40% at 15% 5%,rgba(212,167,79,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 85% 85%,rgba(212,167,79,.03) 0%,transparent 60%)}
-.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;background-image:linear-gradient(var(--fg) 1px,transparent 1px),linear-gradient(90deg,var(--fg) 1px,transparent 1px);background-size:64px 64px}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
-.ldot{position:relative}.ldot::after{content:'';position:absolute;inset:-3px;border-radius:50%;background:var(--red);animation:pulse 1.4s ease infinite;z-index:-1}
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-@keyframes goalIn{0%{opacity:0;transform:translateY(-20px) scale(.9)}12%{opacity:1;transform:translateY(0) scale(1)}88%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
-.goal-notif{animation:goalIn 4s ease forwards}
+    /* Subtle background atmosphere */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -30%;
+      left: -10%;
+      width: 60%;
+      height: 60%;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%;
+      right: -10%;
+      width: 50%;
+      height: 50%;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.03) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-.pw{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;border:1px solid var(--brd)}
-.pw video{width:100%;height:100%;object-fit:contain;display:block}
-.pc{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:40px 14px 10px;opacity:0;transition:opacity .25s}
-.pw:hover .pc,.pw.show-c .pc{opacity:1}
-.po{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
-.pbb{width:60px;height:60px;border-radius:50%;background:rgba(212,167,79,.9);color:#000;font-size:22px;display:flex;align-items:center;justify-content:center;transition:transform .15s}
-.pbb:hover{transform:scale(1.08)}
+    .mono { font-family: 'JetBrains Mono', monospace; }
 
-input[type=range]{-webkit-appearance:none;background:transparent;cursor:pointer}
-input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--brdL);border-radius:2px}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--gold);margin-top:-4.5px}
+    /* Video player container */
+    .player-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 60px -15px rgba(249,115,22,0.08);
+    }
+    .player-wrap video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #000;
+    }
 
-.mc{background:var(--card);border:1px solid var(--brd);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .2s}
-.mc:hover{background:var(--cardH);border-color:var(--brdL);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.25)}
-.mc.act{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 6px 20px rgba(212,167,79,.08)}
+    /* Overlay states */
+    .player-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+    .player-overlay.hidden { opacity: 0; pointer-events: none; }
 
-.tb{padding:9px 18px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:var(--fg3);border:none;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer;background:none;white-space:nowrap}
-.tb:hover{color:var(--fg2)}.tb.act{color:var(--gold);border-bottom-color:var(--gold)}
+    .spinner {
+      width: 48px; height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-.ei{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--brd);font-size:12px}.ei:last-child{border-bottom:none}
+    /* Quality pills */
+    .q-pill {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .q-pill:hover { border-color: var(--border-light); color: var(--fg); }
+    .q-pill.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
 
-.st{width:100%;border-collapse:collapse;font-size:12px}
-.st th{text-align:left;padding:7px 8px;font-weight:600;color:var(--fg3);font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--brd)}
-.st td{padding:8px;border-bottom:1px solid var(--brd)}.st tr:hover td{background:var(--cardH)}
-.st .q1{border-left:2px solid var(--grn)}.st .q2{border-left:2px solid #f59e0b}
+    /* Settings panel */
+    .settings-panel {
+      position: fixed;
+      top: 0; right: 0;
+      width: 420px;
+      max-width: 90vw;
+      height: 100vh;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+    .settings-panel.open { transform: translateX(0); }
 
-.toast{padding:10px 18px;border-radius:8px;font-size:12px;background:var(--card);border:1px solid var(--brd);box-shadow:0 8px 28px rgba(0,0,0,.4);animation:tin .3s ease,tout .3s ease 2.7s forwards;max-width:340px}
-@keyframes tin{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
-@keyframes tout{from{opacity:1}to{opacity:0;transform:translateX(16px)}}
+    .settings-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .settings-backdrop.open { opacity: 1; pointer-events: auto; }
 
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
-.modal-bg.open{opacity:1;pointer-events:all}
-.modal-box{background:var(--bg2);border:1px solid var(--brd);border-radius:14px;padding:28px;max-width:680px;width:92%;max-height:82vh;overflow-y:auto;transform:scale(.95);transition:transform .25s}
-.modal-bg.open .modal-box{transform:scale(1)}
+    /* Input styles */
+    .input-field {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--fg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus { border-color: var(--accent); }
+    .input-field::placeholder { color: var(--dim); }
 
-@keyframes sf{0%{color:var(--gold);transform:scale(1.25)}100%{color:var(--fg);transform:scale(1)}}
-.sf{animation:sf .5s ease}
+    /* Buttons */
+    .btn-primary {
+      padding: 10px 24px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.ch-card{background:var(--card);border:1px solid var(--brd);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;text-align:center}
-.ch-card:hover{border-color:var(--gold);background:var(--cardH);transform:translateY(-2px)}
-.ch-card.act{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+    .btn-ghost {
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-ghost:hover { border-color: var(--border-light); color: var(--fg); }
 
-#particles{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35}
+    /* Code block */
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre;
+      tab-size: 2;
+    }
+    .code-block::-webkit-scrollbar { width: 6px; }
+    .code-block::-webkit-scrollbar-track { background: transparent; }
+    .code-block::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.shim{background:linear-gradient(90deg,var(--card) 25%,var(--cardH) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toast {
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(12px);
+      border: 1px solid;
+      max-width: 380px;
+    }
+    .toast.info { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.3); color: var(--accent); }
+    .toast.error { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+    .toast.success { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.3); color: var(--success); }
+    .toast.out { animation: toastOut 0.3s ease forwards; }
 
-@media(max-width:768px){.pw{border-radius:8px}.sd{font-size:2.2rem!important}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-</style>
+    @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(40px); } }
+
+    /* Collapsible */
+    .collapse-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .collapse-content.open { max-height: 2000px; }
+
+    .collapse-toggle i { transition: transform 0.3s ease; }
+    .collapse-toggle.open i { transform: rotate(180deg); }
+
+    /* Live badge */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      background: var(--danger);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .live-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: #fff;
+      border-radius: 50%;
+      animation: livePulse 1.5s ease-in-out infinite;
+    }
+    @keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
 </head>
 <body>
-<div class="bg-atmo"></div>
-<div class="bg-grid"></div>
-<canvas id="particles"></canvas>
 
-<div id="toasts" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
-<div id="goal-notif" class="fixed top-0 left-0 right-0 z-50 pointer-events-none"></div>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
-<!-- Settings Modal -->
-<div id="settings" class="modal-bg" onclick="if(event.target===this)closeSet()">
-<div class="modal-box">
-  <div class="flex items-center justify-between mb-5">
-    <h2 class="font-display text-xl font-600 tracking-wide">Settings</h2>
-    <button onclick="closeSet()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--card)] transition"><i class="fas fa-times text-[var(--fg3)]"></i></button>
-  </div>
-  <div class="mb-5">
-    <label class="block text-sm font-600 text-[var(--fg2)] mb-2">Cloudflare Worker URL</label>
-    <div class="flex gap-2">
-      <input id="wurl" type="url" placeholder="https://wc2026-stream.xxx.workers.dev" class="flex-1 bg-[var(--bg)] border border-[var(--brd)] rounded-lg px-3 py-2 text-sm text-[var(--fg)] outline-none focus:border-[var(--gold)] transition placeholder:text-[var(--fg3)]">
-      <button onclick="saveWurl()" class="px-4 py-2 bg-[var(--gold)] text-black font-600 text-sm rounded-lg hover:bg-[var(--goldH)] transition">Save</button>
-    </div>
-    <p class="text-xs text-[var(--fg3)] mt-1.5">Leave empty for demo mode. The worker scrapes blogspot pages and proxies streams.</p>
-  </div>
-  <div id="conn-st" class="mb-5 p-3 rounded-lg bg-[var(--bg)] border border-[var(--brd)]">
-    <div class="flex items-center gap-2"><div id="conn-d" class="w-2 h-2 rounded-full bg-[var(--fg3)]"></div><span id="conn-t" class="text-sm text-[var(--fg3)]">Not connected</span></div>
-  </div>
-  <div class="mb-4">
-    <div class="flex items-center justify-between mb-2">
-      <label class="text-sm font-600 text-[var(--fg2)]">Debug: Test Scraper</label>
-      <button onclick="testScrape()" class="text-xs text-[var(--gold)] hover:text-[var(--goldH)] transition flex items-center gap-1"><i class="fas fa-bug"></i> Test</button>
-    </div>
-    <div id="scrape-out" class="bg-[var(--bg)] border border-[var(--brd)] rounded-lg p-3 font-mono text-xs text-[var(--fg3)] max-h-48 overflow-y-auto whitespace-pre-wrap">Click "Test" to check if the scraper can extract stream URLs from your blogspot pages.</div>
-  </div>
-  <div class="p-3 rounded-lg bg-[var(--goldD)] border border-[rgba(212,167,79,.2)]">
-    <h3 class="font-display text-xs font-500 text-[var(--gold)] mb-2 tracking-wide">HOW IT WORKS</h3>
-    <ol class="text-xs text-[var(--fg2)] space-y-1 list-decimal list-inside">
-      <li>The worker visits your blogspot page (e.g. siiirjune1.blogspot.com/p/mci.html)</li>
-      <li>It extracts the JWPlayer stream URL (m3u8/mpd) from the page HTML</li>
-      <li>All stream segments are proxied through Cloudflare's edge network</li>
-      <li>Your browser only connects to the CF worker — not the blogspot/source directly</li>
-      <li>This bypasses UAE geo-blocks since CF edge servers are not restricted</li>
-    </ol>
-  </div>
-</div>
-</div>
+  <!-- Settings Backdrop -->
+  <div class="settings-backdrop" id="settingsBackdrop" onclick="closeSettings()"></div>
 
-<!-- App -->
-<div class="relative z-10 min-h-screen flex flex-col">
+  <!-- Settings Panel -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-semibold">Settings</h2>
+        <button onclick="closeSettings()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors" aria-label="Close settings">
+          <i class="fas fa-times text-sm" style="color:var(--muted)"></i>
+        </button>
+      </div>
 
-<!-- Header -->
-<header class="sticky top-0 z-40 backdrop-blur-xl bg-[rgba(7,7,12,.85)] border-b border-[var(--brd)]">
-<div class="max-w-7xl mx-auto px-4 h-13 flex items-center justify-between">
-  <div class="flex items-center gap-2.5">
-    <div class="w-7 h-7 rounded-lg bg-[var(--gold)] flex items-center justify-center"><i class="fas fa-futbol text-black text-xs"></i></div>
-    <span class="font-display text-base font-600 tracking-wider">WC2026 <span class="text-[var(--gold)]">LIVE</span></span>
-  </div>
-  <nav class="flex items-center gap-1">
-    <button onclick="scrollTo('player-sec')" class="px-2.5 py-1 text-xs text-[var(--fg2)] hover:text-[var(--fg)] transition rounded hover:bg-[var(--card)]"><i class="fas fa-tv mr-1"></i><span class="hidden sm:inline">Live</span></button>
-    <button onclick="scrollTo('content-sec')" class="px-2.5 py-1 text-xs text-[var(--fg2)] hover:text-[var(--fg)] transition rounded hover:bg-[var(--card)]"><i class="fas fa-list mr-1"></i><span class="hidden sm:inline">Matches</span></button>
-    <button onclick="openSet()" class="px-2.5 py-1 text-xs text-[var(--fg2)] hover:text-[var(--fg)] transition rounded hover:bg-[var(--card)]"><i class="fas fa-cog"></i></button>
-    <div id="mode-b" class="ml-1.5 px-2 py-0.5 rounded-full text-[9px] font-600 tracking-wider uppercase bg-[var(--goldD)] text-[var(--gold)] border border-[rgba(212,167,79,.2)]">Demo</div>
-  </nav>
-</div>
-</header>
+      <!-- Worker URL -->
+      <label class="block mb-2 text-sm font-medium" style="color:var(--muted)">Cloudflare Worker URL</label>
+      <input type="url" id="workerUrlInput" class="input-field mb-2" placeholder="https://your-worker.workers.dev">
+      <p class="text-xs mb-6" style="color:var(--dim)">Required. All streams are proxied through this worker.</p>
 
-<!-- Player -->
-<section id="player-sec" class="max-w-7xl mx-auto w-full px-4 pt-5">
-<div class="pw" id="pw" onmousemove="showC()" onmouseleave="hideC()">
-  <video id="vid" playsinline></video>
-  <div class="po" id="po" onclick="togglePlay()">
-    <div class="pbb" id="pbb"><i class="fas fa-play" id="pib"></i></div>
-  </div>
-  <div id="ph" class="absolute inset-0 flex flex-col items-center justify-center bg-[var(--bg)]">
-    <div class="w-16 h-16 rounded-full bg-[var(--goldD)] border border-[rgba(212,167,79,.2)] flex items-center justify-center mb-3"><i class="fas fa-futbol text-2xl text-[var(--gold)]"></i></div>
-    <p class="font-display text-lg tracking-wider text-[var(--fg2)] mb-1">SELECT A MATCH</p>
-    <p class="text-sm text-[var(--fg3)]">Choose a live match below to start watching</p>
-    <div id="demo-hint" class="mt-3 px-3 py-1.5 rounded-full bg-[var(--goldD)] border border-[rgba(212,167,79,.15)] text-xs text-[var(--gold)]"><i class="fas fa-info-circle mr-1"></i>Deploy worker for live streams</div>
-  </div>
-  <div id="plb" class="absolute top-2.5 left-2.5 z-10 hidden">
-    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[rgba(230,57,70,.9)] backdrop-blur-sm"><div class="w-1.5 h-1.5 rounded-full bg-white ldot"></div><span class="text-[10px] font-700 text-white tracking-wider uppercase">Live</span></div>
-  </div>
-  <div class="pc" id="pc">
-    <div class="flex items-center gap-2.5">
-      <button onclick="togglePlay()" class="text-white hover:text-[var(--gold)] transition"><i class="fas fa-play" id="pis"></i></button>
-      <i class="fas fa-volume-up text-xs text-[var(--fg3)]"></i>
-      <input type="range" id="vol" min="0" max="100" value="80" class="w-16" oninput="setVol(this.value)">
-      <div class="flex-1"></div>
-      <select id="qsel" class="bg-[rgba(255,255,255,.1)] text-white text-[11px] rounded px-1.5 py-0.5 border-none outline-none cursor-pointer" onchange="setQ(this.value)"><option value="-1">Auto</option></select>
-      <button onclick="togglePiP()" class="text-white hover:text-[var(--gold)] transition text-xs"><i class="fas fa-external-link-alt"></i></button>
-      <button onclick="toggleFs()" class="text-white hover:text-[var(--gold)] transition text-xs"><i class="fas fa-expand" id="fsi"></i></button>
+      <button onclick="saveWorkerUrl()" class="btn-primary w-full mb-8">Save Worker URL</button>
+
+      <!-- Deploy Instructions -->
+      <div class="border-t pt-6" style="border-color:var(--border)">
+        <button onclick="toggleCollapse('deploySection')" class="collapse-toggle flex items-center justify-between w-full text-left mb-3" id="deploySection-toggle">
+          <span class="text-sm font-semibold">Deploy Worker Instructions</span>
+          <i class="fas fa-chevron-down text-xs" style="color:var(--dim)"></i>
+        </button>
+        <div class="collapse-content" id="deploySection">
+          <ol class="text-sm space-y-3 mb-5" style="color:var(--muted); list-style: decimal; padding-left: 20px;">
+            <li>Go to <a href="https://workers.cloudflare.com" target="_blank" class="underline" style="color:var(--accent)">workers.cloudflare.com</a></li>
+            <li>Sign in / create account (free tier works)</li>
+            <li>Click "Create Worker" → give it a name</li>
+            <li>Replace the default code with the worker code below</li>
+            <li>Click "Deploy"</li>
+            <li>Copy the worker URL (e.g. <span class="mono text-xs">https://xxx.workers.dev</span>)</li>
+            <li>Paste it in the field above and save</li>
+          </ol>
+
+          <button onclick="copyWorkerCode()" class="btn-ghost w-full mb-3">
+            <i class="fas fa-copy mr-2"></i>Copy Worker Code
+          </button>
+
+          <div class="code-block" id="workerCodeBlock"></div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="border-t pt-6 mt-6" style="border-color:var(--border)">
+        <p class="text-xs" style="color:var(--dim)">
+          This player uses a Cloudflare Worker to proxy YouTube streams, bypassing geo-restrictions.
+          The worker impersonates an Android client to access region-locked content.
+          No data is stored. Streams are proxied in real-time through Cloudflare's edge network.
+        </p>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Match info bar -->
-<div id="mib" class="mt-3 hidden">
-<div class="bg-[var(--card)] border border-[var(--brd)] rounded-xl p-4">
-  <div class="flex items-center justify-between">
-    <div class="flex items-center gap-2.5 flex-1 justify-end text-right">
-      <div><p class="font-display text-base font-500 tracking-wider" id="ihn">—</p><p class="text-[10px] text-[var(--fg3)]" id="ihc"></p></div>
-      <span class="text-2xl" id="ihf">—</span>
+  <!-- Main Content -->
+  <div class="relative z-10 max-w-5xl mx-auto px-4 py-6">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: var(--accent-dim); border: 1px solid rgba(249,115,22,0.25);">
+          <i class="fas fa-play text-xs" style="color:var(--accent)"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight" style="letter-spacing: -0.02em;">GeoBypass Player</h1>
+        </div>
+      </div>
+      <button onclick="openSettings()" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors" aria-label="Open settings">
+        <i class="fas fa-gear text-sm" style="color:var(--muted)"></i>
+      </button>
+    </header>
+
+    <!-- URL Input Bar -->
+    <div class="flex gap-2 mb-5">
+      <input type="text" id="urlInput" class="input-field flex-1" placeholder="Paste YouTube URL or video ID..." value="https://www.youtube.com/watch?v=YCNysrewn7k">
+      <button id="loadBtn" onclick="loadVideo()" class="btn-primary flex items-center gap-2" style="white-space: nowrap;">
+        <i class="fas fa-satellite-dish text-xs"></i>
+        Load
+      </button>
     </div>
-    <div class="flex items-center gap-3 px-5">
-      <span class="font-display text-4xl font-700 sd" id="ihs">0</span>
-      <div class="flex flex-col items-center"><span class="text-[10px] text-[var(--fg3)] mb-0.5" id="imin">—</span><span class="text-base text-[var(--fg3)]">:</span><span class="text-[9px] text-[var(--fg3)] mt-0.5" id="ist"></span></div>
-      <span class="font-display text-4xl font-700 sd" id="ias">0</span>
+
+    <!-- Player -->
+    <div class="player-wrap mb-4" id="playerWrap">
+      <video id="videoEl" controls playsinline></video>
+
+      <!-- Idle Overlay -->
+      <div class="player-overlay" id="idleOverlay">
+        <i class="fas fa-satellite-dish text-3xl" style="color:var(--dim)"></i>
+        <p class="text-sm" style="color:var(--dim)">Enter a YouTube URL and click Load</p>
+      </div>
+
+      <!-- Loading Overlay -->
+      <div class="player-overlay hidden" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="text-sm" style="color:var(--muted)" id="loadingText">Fetching video info...</p>
+      </div>
+
+      <!-- Error Overlay -->
+      <div class="player-overlay hidden" id="errorOverlay">
+        <i class="fas fa-triangle-exclamation text-2xl" style="color:var(--danger)"></i>
+        <p class="text-sm text-center px-8" style="color:var(--muted)" id="errorText">An error occurred</p>
+        <button onclick="resetPlayer()" class="btn-ghost text-xs mt-2">Try Again</button>
+      </div>
     </div>
-    <div class="flex items-center gap-2.5 flex-1">
-      <span class="text-2xl" id="iahf">—</span>
-      <div><p class="font-display text-base font-500 tracking-wider" id="ian">—</p><p class="text-[10px] text-[var(--fg3)]" id="iac"></p></div>
+
+    <!-- Video Info -->
+    <div id="videoInfo" class="mb-4" style="display:none;">
+      <div class="flex items-start justify-between gap-4">
+        <div class="min-w-0">
+          <h2 class="text-base font-semibold leading-snug mb-1 truncate" id="videoTitle"></h2>
+          <p class="text-sm" style="color:var(--muted)">
+            <span id="videoAuthor"></span>
+            <span id="videoMeta" class="ml-2"></span>
+          </p>
+        </div>
+        <div id="liveBadgeWrap" style="display:none;">
+          <span class="live-badge">LIVE</span>
+        </div>
+      </div>
     </div>
+
+    <!-- Quality Selector -->
+    <div id="qualitySection" style="display:none;">
+      <p class="text-xs font-medium mb-2" style="color:var(--dim)">QUALITY</p>
+      <div class="flex flex-wrap gap-2" id="qualityList"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-6 text-center" style="border-top: 1px solid var(--border);">
+      <p class="text-xs" style="color:var(--dim)">
+        Streams are proxied through your Cloudflare Worker. Free tier: 100k requests/day.
+      </p>
+    </footer>
   </div>
-  <p class="text-center text-[10px] text-[var(--fg3)] mt-2" id="iven"></p>
-</div>
-</div>
-
-<!-- Events -->
-<div id="eb" class="mt-2.5 hidden">
-<div class="bg-[var(--card)] border border-[var(--brd)] rounded-xl p-3">
-  <h3 class="font-display text-[10px] font-500 tracking-widest text-[var(--fg3)] uppercase mb-2">Match Events</h3>
-  <div id="el" class="max-h-36 overflow-y-auto"></div>
-</div>
-</div>
-</section>
-
-<!-- Content -->
-<section id="content-sec" class="max-w-7xl mx-auto w-full px-4 py-6 flex-1">
-<div class="flex border-b border-[var(--brd)] mb-5 overflow-x-auto">
-  <button class="tb act" data-t="live" onclick="switchT('live',this)"><i class="fas fa-circle text-[var(--red)] text-[7px] mr-1.5"></i>Live</button>
-  <button class="tb" data-t="schedule" onclick="switchT('schedule',this)"><i class="fas fa-calendar-alt mr-1.5 text-xs"></i>Schedule</button>
-  <button class="tb" data-t="standings" onclick="switchT('standings',this)"><i class="fas fa-trophy mr-1.5 text-xs"></i>Standings</button>
-  <button class="tb" data-t="channels" onclick="switchT('channels',this)"><i class="fas fa-signal mr-1.5 text-xs"></i>Channels</button>
-</div>
-
-<div id="t-live" class="tp">
-  <div id="lm" class="grid grid-cols-1 md:grid-cols-2 gap-2.5"></div>
-  <div id="nl" class="hidden text-center py-14"><i class="fas fa-satellite-dish text-3xl text-[var(--fg3)] mb-3"></i><p class="font-display text-base text-[var(--fg3)] tracking-wider">NO LIVE MATCHES</p></div>
-</div>
-
-<div id="t-schedule" class="tp hidden"><div id="sl" class="space-y-5"></div></div>
-
-<div id="t-standings" class="tp hidden"><div id="stl" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div></div>
-
-<div id="t-channels" class="tp hidden">
-  <p class="text-sm text-[var(--fg3)] mb-4">Direct channel access — each channel maps to a blogspot page that the worker scrapes for stream URLs.</p>
-  <div id="chl" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"></div>
-</div>
-</section>
-
-<footer class="border-t border-[var(--brd)] py-5 mt-auto">
-<div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-  <p class="text-[10px] text-[var(--fg3)]">FIFA World Cup 2026 — Unofficial Streaming Interface</p>
-  <div class="flex items-center gap-3 text-[10px] text-[var(--fg3)]"><span>CF Workers Proxy</span><span>·</span><span>HLS.js</span><span>·</span><span>JWPlayer Scraper</span></div>
-</div>
-</footer>
-</div>
 
 <script>
-// ===== STATE =====
-const S={wurl:localStorage.getItem('wc26w')||'',live:false,cur:null,matches:[],standings:{},hls:null,cto:null,di:null};
-
-// ===== DEMO DATA =====
-const DM=[
-{id:'m1',stage:'Group A',md:1,date:'2026-06-11T21:00:00Z',home:{code:'USA',name:'United States',flag:'🇺🇸'},away:{code:'MAR',name:'Morocco',flag:'🇲🇦'},venue:'SoFi Stadium, Los Angeles',status:'live',score:{home:2,away:1},minute:67,channel:'ch1',events:[{type:'goal',team:'home',player:'Pulisic',minute:23,assist:'McKennie'},{type:'goal',team:'away',player:'Hakimi',minute:45},{type:'yellow',team:'away',player:'Amrabat',minute:52},{type:'goal',team:'home',player:'Weah',minute:61,assist:'Robinson'}]},
-{id:'m2',stage:'Group A',md:1,date:'2026-06-11T21:00:00Z',home:{code:'PAN',name:'Panama',flag:'🇵🇦'},away:{code:'SCO',name:'Scotland',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿'},venue:'MetLife Stadium, New York',status:'upcoming',score:{home:0,away:0},minute:0,channel:'ch2',events:[]},
-{id:'m3',stage:'Group B',md:1,date:'2026-06-12T18:00:00Z',home:{code:'ARG',name:'Argentina',flag:'🇦🇷'},away:{code:'CAN',name:'Canada',flag:'🇨🇦'},venue:'AT&T Stadium, Dallas',status:'live',score:{home:3,away:0},minute:78,channel:'ch1',events:[{type:'goal',team:'home',player:'Messi',minute:12,assist:'De Paul'},{type:'goal',team:'home',player:'Alvarez',minute:34},{type:'yellow',team:'away',player:'Buchanan',minute:41},{type:'goal',team:'home',player:'Di Maria',minute:66,assist:'Messi'}]},
-{id:'m4',stage:'Group B',md:1,date:'2026-06-12T21:00:00Z',home:{code:'NGA',name:'Nigeria',flag:'🇳🇬'},away:{code:'IRQ',name:'Iraq',flag:'🇮🇶'},venue:'Lumen Field, Seattle',status:'upcoming',score:{home:0,away:0},minute:0,channel:'ch3',events:[]},
-{id:'m5',stage:'Group C',md:1,date:'2026-06-13T18:00:00Z',home:{code:'ENG',name:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},away:{code:'DEN',name:'Denmark',flag:'🇩🇰'},venue:'Soldier Field, Chicago',status:'upcoming',score:{home:0,away:0},minute:0,channel:'ch2',events:[]},
-{id:'m6',stage:'Group D',md:1,date:'2026-06-13T21:00:00Z',home:{code:'FRA',name:'France',flag:'🇫🇷'},away:{code:'PER',name:'Peru',flag:'🇵🇪'},venue:'Hard Rock Stadium, Miami',status:'upcoming',score:{home:0,away:0},minute:0,channel:'ch3',events:[]},
-{id:'m7',stage:'R32',md:4,date:'2026-06-28T21:00:00Z',home:{code:'TBD',name:'TBD',flag:'🏆'},away:{code:'TBD',name:'TBD',flag:'🏆'},venue:'SoFi Stadium',status:'upcoming',score:{home:0,away:0},minute:0,channel:'ch1',events:[]},
-{id:'m8',stage:'Final',md:7,date:'2026-07-19T20:00:00Z',home:{code:'TBD',name:'TBD',flag:'🏆'},away:{code:'TBD',name:'TBD',flag:'🏆'},venue:'MetLife Stadium',status:'upcoming',score:{home:0,away:0},minute:0,channel:'ch1',events:[]}
-];
-
-const DS={
-'Group A':[{team:'USA',flag:'🇺🇸',p:1,w:1,d:0,l:0,gf:2,ga:1,pts:3},{team:'MAR',flag:'🇲🇦',p:1,w:0,d:0,l:1,gf:1,ga:2,pts:0},{team:'PAN',flag:'🇵🇦',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'SCO',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}],
-'Group B':[{team:'ARG',flag:'🇦🇷',p:1,w:1,d:0,l:0,gf:3,ga:0,pts:3},{team:'CAN',flag:'🇨🇦',p:1,w:0,d:0,l:1,gf:0,ga:3,pts:0},{team:'NGA',flag:'🇳🇬',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'IRQ',flag:'🇮🇶',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}],
-'Group C':[{team:'ENG',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'DEN',flag:'🇩🇰',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'SRB',flag:'🇷🇸',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'GHA',flag:'🇬🇭',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}],
-'Group D':[{team:'FRA',flag:'🇫🇷',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'PER',flag:'🇵🇪',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'UZB',flag:'🇺🇿',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'IDN',flag:'🇮🇩',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}],
-'Group E':[{team:'ESP',flag:'🇪🇸',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'MEX',flag:'🇲🇽',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'EGY',flag:'🇪🇬',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'NZL',flag:'🇳🇿',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}],
-'Group F':[{team:'BRA',flag:'🇧🇷',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'COL',flag:'🇨🇴',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'CMR',flag:'🇨🇲',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'GRE',flag:'🇬🇷',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}],
-'Group G':[{team:'GER',flag:'🇩🇪',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'SUI',flag:'🇨🇭',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'KOR',flag:'🇰🇷',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'JAM',flag:'🇯🇲',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}],
-'Group H':[{team:'POR',flag:'🇵🇹',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'URU',flag:'🇺🇾',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'CRC',flag:'🇨🇷',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0},{team:'CHN',flag:'🇨🇳',p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}]
+// ===================== Worker Code (embedded for copy) =====================
+const WORKER_CODE = `// === YouTube Geo-Bypass Proxy Worker ===
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Range',
 };
-
-// Default channels (same as worker)
-const DCH=[
-{id:'ch1',name:'Sports Channel 1',icon:'fa-tv'},
-{id:'ch2',name:'Sports Channel 2',icon:'fa-tv'},
-{id:'ch3',name:'Sports Channel 3',icon:'fa-tv'}
-];
-
-// ===== API =====
-const A={
-  async get(st){if(!S.live){let d=[...DM];if(st)d=d.filter(x=>x.status===st);return d}const r=await fetch(`${S.wurl}/api/matches${st?'?status='+st:''}`);if(!r.ok)throw 0;return r.json()},
-  async stream(ch){if(!S.live)return null;return`${S.wurl}/api/stream/${ch}`},
-  async standings(){if(!S.live)return DS;const r=await fetch(`${S.wurl}/api/standings`);if(!r.ok)throw 0;return r.json()},
-  async channels(){if(!S.live)return DCH;const r=await fetch(`${S.wurl}/api/channels`);if(!r.ok)throw 0;return r.json()},
-  async health(){if(!S.wurl)return false;try{const r=await fetch(`${S.wurl}/api/health`,{signal:AbortSignal.timeout(5000)});return r.ok}catch{return false}},
-  async debug(ch){if(!S.wurl)return null;try{const r=await fetch(`${S.wurl}/api/debug/scrape?channel=${ch}`,{signal:AbortSignal.timeout(10000)});if(!r.ok)throw 0;return r.json()}catch{return null}}
+const YT_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+  'Referer': 'https://www.youtube.com/',
+  'Origin': 'https://www.youtube.com',
 };
+addEventListener('fetch', e => e.respondWith(handle(e.request)));
+async function handle(req) {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
+  const url = new URL(req.url);
+  if (url.pathname === '/info') return getInfo(url.searchParams.get('v'));
+  if (url.pathname === '/proxy') return proxyStream(url.searchParams.get('url'), req.headers);
+  return new Response('YT Proxy Active', { headers: { 'Content-Type': 'text/plain', ...CORS } });
+}
+async function getInfo(videoId) {
+  if (!videoId) return json({ error: 'Missing video ID' }, 400);
+  const res = await fetch('https://www.youtube.com/youtubei/v1/player', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...YT_HEADERS },
+    body: JSON.stringify({
+      videoId,
+      context: { client: { clientName: 'ANDROID', clientVersion: '19.29.37', clientScreen: 'WATCH', androidSdkVersion: 33 } },
+    }),
+  });
+  const data = await res.json();
+  const p = data.playabilityStatus;
+  if (p && p.status !== 'OK') return json({ error: p.reason || p.messages?.[0] || 'Video unavailable', status: p.status }, 403);
+  const vd = data.videoDetails || {}, sd = data.streamingData || {};
+  return json({
+    title: vd.title, author: vd.author, lengthSeconds: vd.lengthSeconds,
+    thumbnail: vd.thumbnail?.thumbnails?.pop()?.url || '',
+    isLive: vd.isLive || false,
+    hlsManifestUrl: sd.hlsManifestUrl || null,
+    dashManifestUrl: sd.dashManifestUrl || null,
+    formats: (sd.formats||[]).map(f => pick(f,['itag','quality','qualityLabel','mimeType','bitrate','width','height','url'])),
+    adaptiveFormats: (sd.adaptiveFormats||[]).map(f => pick(f,['itag','quality','qualityLabel','mimeType','bitrate','width','height','url','audioQuality'])),
+  });
+}
+async function proxyStream(targetUrl, reqHeaders) {
+  if (!targetUrl) return new Response('Missing url param', { status: 400 });
+  const decoded = decodeURIComponent(targetUrl);
+  const headers = { ...YT_HEADERS };
+  const range = reqHeaders.get('Range');
+  if (range) headers['Range'] = range;
+  const res = await fetch(decoded, { headers });
+  const ct = res.headers.get('content-type') || '';
+  if (ct.includes('mpegurl') || ct.includes('m3u8') || decoded.includes('.m3u8')) {
+    let text = await res.text();
+    const base = decoded.substring(0, decoded.lastIndexOf('/') + 1);
+    text = rewriteM3U8(text, base);
+    return new Response(text, { headers: { ...CORS, 'Content-Type': 'application/vnd.apple.mpegurl', 'Cache-Control': 'no-cache' } });
+  }
+  const h = new Headers(res.headers);
+  h.set('Access-Control-Allow-Origin', '*');
+  h.set('Access-Control-Expose-Headers', 'Content-Range, Content-Length');
+  return new Response(res.body, { status: res.status, headers: h });
+}
+function rewriteM3U8(text, baseUrl) {
+  return text.split('\\n').map(line => {
+    const t = line.trim();
+    if (!t || t.startsWith('#EXT')) {
+      if (t.startsWith('#EXT-X-KEY')) return t.replace(/URI="([^"]+)"/, (_,u) => u.startsWith('http') ? \`URI="\${u}"\` : \`URI="\${baseUrl}\${u}"\`);
+      return line;
+    }
+    return t.startsWith('http') ? t : baseUrl + t;
+  }).join('\\n');
+}
+function pick(o, k) { const r={}; for(const x of k) if(o[x]!==undefined) r[x]=o[x]; return r; }
+function json(d, s=200) { return new Response(JSON.stringify(d), { status:s, headers:{...CORS,'Content-Type':'application/json'} }); }`;
 
-// ===== TOAST =====
-function toast(m,t='info'){
-  const c=document.getElementById('toasts');
-  const ic={info:'fa-info-circle text-[var(--gold)]',error:'fa-exclamation-circle text-[var(--red)]',success:'fa-check-circle text-[var(--grn)]'};
-  const el=document.createElement('div');
-  el.className='toast';el.innerHTML=`<div class="flex items-center gap-2"><i class="fas ${ic[t]||ic.info}"></i><span>${m}</span></div>`;
-  c.appendChild(el);setTimeout(()=>el.remove(),3200);
+// ===================== State =====================
+let workerUrl = localStorage.getItem('gb_worker_url') || '';
+let hlsInstance = null;
+let currentVideoData = null;
+let currentMode = null; // 'hls' | 'mp4'
+
+// ===================== DOM Refs =====================
+const $video = document.getElementById('videoEl');
+const $urlInput = document.getElementById('urlInput');
+const $loadBtn = document.getElementById('loadBtn');
+const $idleOverlay = document.getElementById('idleOverlay');
+const $loadingOverlay = document.getElementById('loadingOverlay');
+const $loadingText = document.getElementById('loadingText');
+const $errorOverlay = document.getElementById('errorOverlay');
+const $errorText = document.getElementById('errorText');
+const $videoInfo = document.getElementById('videoInfo');
+const $videoTitle = document.getElementById('videoTitle');
+const $videoAuthor = document.getElementById('videoAuthor');
+const $videoMeta = document.getElementById('videoMeta');
+const $liveBadgeWrap = document.getElementById('liveBadgeWrap');
+const $qualitySection = document.getElementById('qualitySection');
+const $qualityList = document.getElementById('qualityList');
+const $workerUrlInput = document.getElementById('workerUrlInput');
+const $settingsPanel = document.getElementById('settingsPanel');
+const $settingsBackdrop = document.getElementById('settingsBackdrop');
+
+// ===================== Init =====================
+ $workerUrlInput.value = workerUrl;
+document.getElementById('workerCodeBlock').textContent = WORKER_CODE;
+
+// Enter key on URL input
+ $urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') loadVideo(); });
+
+// ===================== Toast System =====================
+function toast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icons = { info: 'fa-circle-info', error: 'fa-circle-xmark', success: 'fa-circle-check' };
+  el.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 4000);
 }
 
-function goalNotif(team,player){
-  const el=document.getElementById('goal-notif');
-  el.innerHTML=`<div class="goal-notif mx-auto max-w-sm py-3 px-6 text-center" style="background:linear-gradient(135deg,rgba(212,167,79,.95),rgba(180,130,40,.95));border-radius:0 0 14px 14px"><p class="font-display text-3xl font-700 text-black tracking-widest">GOAL</p><p class="text-black/80 text-sm mt-0.5 font-500">${team} — ${player}</p></div>`;
-  setTimeout(()=>{el.innerHTML=''},4200);
+// ===================== Settings =====================
+function openSettings() {
+  $settingsPanel.classList.add('open');
+  $settingsBackdrop.classList.add('open');
+}
+function closeSettings() {
+  $settingsPanel.classList.remove('open');
+  $settingsBackdrop.classList.remove('open');
+}
+function saveWorkerUrl() {
+  let url = $workerUrlInput.value.trim().replace(/\/+$/, '');
+  if (!url) { toast('Worker URL cannot be empty', 'error'); return; }
+  if (!url.startsWith('http')) { toast('URL must start with http:// or https://', 'error'); return; }
+  workerUrl = url;
+  localStorage.setItem('gb_worker_url', workerUrl);
+  toast('Worker URL saved', 'success');
+  closeSettings();
 }
 
-// ===== SETTINGS =====
-function openSet(){document.getElementById('settings').classList.add('open');document.getElementById('wurl').value=S.wurl;chkConn()}
-function closeSet(){document.getElementById('settings').classList.remove('open')}
-
-async function saveWurl(){
-  const u=document.getElementById('wurl').value.trim().replace(/\/+$/,'');
-  S.wurl=u;localStorage.setItem('wc26w',u);
-  if(u){const ok=await A.health();if(ok){S.live=true;setMode(true);toast('Connected to worker','success')}else{S.live=false;toast('Worker unreachable — demo mode','error')}}
-  else{S.live=false;setMode(false);toast('Switched to demo mode','info')}
-  chkConn();await loadAll();
+// ===================== Collapse =====================
+function toggleCollapse(id) {
+  const content = document.getElementById(id);
+  const toggle = document.getElementById(id + '-toggle');
+  content.classList.toggle('open');
+  toggle.classList.toggle('open');
 }
 
-async function chkConn(){
-  const d=document.getElementById('conn-d'),t=document.getElementById('conn-t');
-  if(!S.wurl){d.className='w-2 h-2 rounded-full bg-[var(--fg3)]';t.textContent='Demo mode — no worker';t.className='text-sm text-[var(--fg3)]';return}
-  t.textContent='Checking...';const ok=await A.health();
-  if(ok){d.className='w-2 h-2 rounded-full bg-[var(--grn)]';t.textContent='Connected to '+new URL(S.wurl).hostname;t.className='text-sm text-[var(--grn)]'}
-  else{d.className='w-2 h-2 rounded-full bg-[var(--red)]';t.textContent='Connection failed';t.className='text-sm text-[var(--red)]'}
+// ===================== Copy Worker Code =====================
+function copyWorkerCode() {
+  navigator.clipboard.writeText(WORKER_CODE).then(() => toast('Worker code copied to clipboard', 'success'));
 }
 
-async function testScrape(){
-  const out=document.getElementById('scrape-out');
-  out.textContent='Testing scraper for ch1...';
-  const r=await A.debug('ch1');
-  if(!r){out.textContent='Failed — worker may not be connected.\n\nMake sure your worker URL is saved and the worker is deployed.';return}
-  out.textContent=JSON.stringify(r,null,2);
+// ===================== Extract Video ID =====================
+function extractVideoId(input) {
+  input = input.trim();
+  // Direct ID (11 chars, alphanumeric + - + _)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+  // URL patterns
+  let m;
+  m = input.match(/(?:v=|\/v\/|\/embed\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  m = input.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  m = input.match(/youtube\.com\/live\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  return null;
 }
 
-function setMode(live){
-  const b=document.getElementById('mode-b'),h=document.getElementById('demo-hint');
-  if(live){b.textContent='Live';b.className='ml-1.5 px-2 py-0.5 rounded-full text-[9px] font-600 tracking-wider uppercase bg-[var(--redD)] text-[var(--red)] border border-[rgba(230,57,70,.2)]';h.classList.add('hidden')}
-  else{b.textContent='Demo';b.className='ml-1.5 px-2 py-0.5 rounded-full text-[9px] font-600 tracking-wider uppercase bg-[var(--goldD)] text-[var(--gold)] border border-[rgba(212,167,79,.2)]';h.classList.remove('hidden')}
+// ===================== Overlay Control =====================
+function showOverlay(name) {
+  [$idleOverlay, $loadingOverlay, $errorOverlay].forEach(el => el.classList.add('hidden'));
+  if (name === 'idle') $idleOverlay.classList.remove('hidden');
+  if (name === 'loading') $loadingOverlay.classList.remove('hidden');
+  if (name === 'error') $errorOverlay.classList.remove('hidden');
+}
+function hideAllOverlays() {
+  [$idleOverlay, $loadingOverlay, $errorOverlay].forEach(el => el.classList.add('hidden'));
 }
 
-// ===== PLAYER =====
-function loadStream(url){
-  destroyP();const v=document.getElementById('vid');
-  document.getElementById('ph').classList.add('hidden');document.getElementById('po').style.display='flex';
-  if(Hls.isSupported()){
-    S.hls=new Hls({enableWorker:true,lowLatencyMode:true,maxBufferLength:30,maxMaxBufferLength:60});
-    S.hls.loadSource(url);S.hls.attachMedia(v);
-    S.hls.on(Hls.Events.MANIFEST_PARSED,(_,d)=>{
-      const sel=document.getElementById('qsel');sel.innerHTML='<option value="-1">Auto</option>';
-      if(d.levels&&d.levels.length>1)d.levels.forEach((l,i)=>{const o=document.createElement('option');o.value=i;o.textContent=l.height+'p';sel.appendChild(o)});
-      v.play().catch(()=>{});
+// ===================== Reset Player =====================
+function resetPlayer() {
+  destroyPlayer();
+  $videoInfo.style.display = 'none';
+  $qualitySection.style.display = 'none';
+  $qualityList.innerHTML = '';
+  currentVideoData = null;
+  currentMode = null;
+  showOverlay('idle');
+}
+
+// ===================== Destroy Current Player =====================
+function destroyPlayer() {
+  if (hlsInstance) {
+    hlsInstance.destroy();
+    hlsInstance = null;
+  }
+  $video.removeAttribute('src');
+  $video.load();
+}
+
+// ===================== Format Duration =====================
+function formatDuration(secs) {
+  if (!secs) return '';
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+
+// ===================== Load Video =====================
+async function loadVideo() {
+  // Check worker URL
+  if (!workerUrl) {
+    toast('Set your Cloudflare Worker URL in Settings first', 'error');
+    openSettings();
+    return;
+  }
+
+  const videoId = extractVideoId($urlInput.value);
+  if (!videoId) {
+    toast('Invalid YouTube URL or video ID', 'error');
+    return;
+  }
+
+  // Reset
+  destroyPlayer();
+  $videoInfo.style.display = 'none';
+  $qualitySection.style.display = 'none';
+  $qualityList.innerHTML = '';
+  currentVideoData = null;
+  currentMode = null;
+
+  // Show loading
+  showOverlay('loading');
+  $loadingText.textContent = 'Fetching video info via proxy...';
+  $loadBtn.disabled = true;
+
+  try {
+    const infoUrl = `${workerUrl}/info?v=${videoId}`;
+    const res = await fetch(infoUrl);
+
+    if (!res.ok) {
+      let errMsg = `HTTP ${res.status}`;
+      try {
+        const errData = await res.json();
+        errMsg = errData.error || errMsg;
+      } catch(e) {}
+      throw new Error(errMsg);
+    }
+
+    const data = await res.json();
+    currentVideoData = data;
+
+    // Display video info
+    $videoTitle.textContent = data.title || 'Untitled';
+    $videoAuthor.textContent = data.author || '';
+    $videoMeta.textContent = data.isLive ? '' : formatDuration(data.lengthSeconds);
+    $liveBadgeWrap.style.display = data.isLive ? 'block' : 'none';
+    $videoInfo.style.display = 'block';
+
+    // Decide playback mode
+    if (data.hlsManifestUrl) {
+      $loadingText.textContent = 'Loading HLS stream...';
+      await startHLS(data.hlsManifestUrl, data);
+    } else if (data.formats && data.formats.length > 0) {
+      $loadingText.textContent = 'Loading video stream...';
+      startMP4(data);
+    } else if (data.adaptiveFormats && data.adaptiveFormats.length > 0) {
+      // Try to find any video+audio combined or just pick best video
+      $loadingText.textContent = 'Loading adaptive stream...';
+      startMP4({ formats: data.adaptiveFormats });
+    } else {
+      throw new Error('No playable streams found. The video may be completely unavailable.');
+    }
+
+    hideAllOverlays();
+    toast('Stream loaded successfully', 'success');
+
+  } catch (err) {
+    console.error('Load error:', err);
+    $errorText.textContent = err.message || 'Failed to load video';
+    showOverlay('error');
+    toast(err.message || 'Failed to load video', 'error');
+  } finally {
+    $loadBtn.disabled = false;
+  }
+}
+
+// ===================== HLS Playback =====================
+function startHLS(manifestUrl, data) {
+  return new Promise((resolve, reject) => {
+    if (!Hls.isSupported()) {
+      reject(new Error('HLS not supported in this browser'));
+      return;
+    }
+
+    destroyPlayer();
+    hlsInstance = new Hls({
+      enableWorker: true,
+      lowLatencyMode: true,
+      xhrSetup: (xhr, url) => {
+        // Don't proxy blob URLs
+        if (url.startsWith('blob:')) return;
+        const proxyUrl = `${workerUrl}/proxy?url=${encodeURIComponent(url)}`;
+        xhr.open('GET', proxyUrl, true);
+      },
     });
-    S.hls.on(Hls.Events.ERROR,(_,d)=>{if(d.fatal){if(d.type===Hls.ErrorTypes.NETWORK_ERROR){toast('Network error — retrying...','error');setTimeout(()=>S.hls&&S.hls.startLoad(),2000)}else if(d.type===Hls.ErrorTypes.MEDIA_ERROR){toast('Media error — recovering','error');S.hls.recoverMediaError()}else{toast('Fatal stream error','error');destroyP();showPh()}}});
-  }else if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=url;v.play().catch(()=>{})}else{toast('HLS not supported','error');showPh()}
-}
-function destroyP(){if(S.hls){S.hls.destroy();S.hls=null}const v=document.getElementById('vid');v.pause();v.removeAttribute('src');v.load()}
-function showPh(){document.getElementById('ph').classList.remove('hidden');document.getElementById('po').style.display='none';document.getElementById('plb').classList.add('hidden')}
-function togglePlay(){const v=document.getElementById('vid');if(!v.src&&!S.hls)return;if(v.paused)v.play().catch(()=>{});else v.pause()}
-function setVol(v){document.getElementById('vid').volume=v/100}
-function setQ(l){if(S.hls)S.hls.currentLevel=parseInt(l)}
-function togglePiP(){const v=document.getElementById('vid');if(document.pictureInPictureElement)document.exitPictureInPicture().catch(()=>{});else if(v.requestPictureInPicture)v.requestPictureInPicture().catch(()=>{})}
-function toggleFs(){const w=document.getElementById('pw');if(!document.fullscreenElement)w.requestFullscreen().catch(()=>{});else document.exitFullscreen().catch(()=>{})}
-function showC(){document.getElementById('pw').classList.add('show-c');clearTimeout(S.cto);S.cto=setTimeout(hideC,3000)}
-function hideC(){const v=document.getElementById('vid');if(!v.paused)document.getElementById('pw').classList.remove('show-c')}
-function updPI(){const v=document.getElementById('vid'),p=!v.paused;document.getElementById('pib').className=p?'fas fa-pause':'fas fa-play';document.getElementById('pis').className=p?'fas fa-pause':'fas fa-play';document.getElementById('po').style.display=p?'none':'flex'}
 
-// ===== SELECT MATCH =====
-async function selMatch(id){
-  const m=S.matches.find(x=>x.id===id);if(!m)return;S.cur=m;
-  document.getElementById('mib').classList.remove('hidden');
-  document.getElementById('ihn').textContent=m.home.name;document.getElementById('ihc').textContent=m.home.code;document.getElementById('ihf').textContent=m.home.flag;
-  document.getElementById('ian').textContent=m.away.name;document.getElementById('iac').textContent=m.away.code;document.getElementById('iahf').textContent=m.away.flag;
-  document.getElementById('ihs').textContent=m.score.home;document.getElementById('ias').textContent=m.score.away;
-  document.getElementById('iven').textContent=`${m.stage} · ${m.venue}`;
-  const mi=document.getElementById('imin'),st=document.getElementById('ist');
-  if(m.status==='live'){mi.textContent=`${m.minute}'`;mi.classList.add('text-[var(--red)]');st.textContent='LIVE';st.classList.add('text-[var(--red)]');document.getElementById('plb').classList.remove('hidden')}
-  else if(m.status==='completed'){mi.textContent='FT';mi.classList.remove('text-[var(--red)]');st.textContent='Full Time';st.classList.remove('text-[var(--red)]');document.getElementById('plb').classList.add('hidden')}
-  else{const d=new Date(m.date);mi.textContent=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' · '+d.toLocaleDateString([],{month:'short',day:'numeric'});mi.classList.remove('text-[var(--red)]');st.textContent='Upcoming';st.classList.remove('text-[var(--red)]');document.getElementById('plb').classList.add('hidden')}
-  renderEv(m.events);
+    hlsInstance.loadSource(manifestUrl);
+    hlsInstance.attachMedia($video);
 
-  if(m.status==='live'&&m.channel){
-    if(S.live){const u=await A.stream(m.channel);if(u){loadStream(u);toast(`Loading: ${m.home.name} vs ${m.away.name}`,'info')}else{showPh();toast('No stream for this match','error')}}
-    else{showPh();document.getElementById('ph').innerHTML=`<div class="w-16 h-16 rounded-full bg-[var(--redD)] border border-[rgba(230,57,70,.2)] flex items-center justify-center mb-3"><div class="w-2.5 h-2.5 rounded-full bg-[var(--red)] ldot"></div></div><p class="font-display text-lg tracking-wider text-[var(--fg2)] mb-1">${m.home.flag} ${m.home.code} vs ${m.away.code} ${m.away.flag}</p><p class="text-sm text-[var(--fg3)] mb-1">Stream ready — deploy worker to watch</p><button onclick="openSet()" class="mt-3 px-4 py-1.5 bg-[var(--gold)] text-black font-600 text-sm rounded-lg hover:bg-[var(--goldH)] transition"><i class="fas fa-cog mr-1"></i>Configure Worker</button>`}
-  }else if(m.status==='upcoming'){showPh();document.getElementById('ph').innerHTML=`<div class="w-16 h-16 rounded-full bg-[var(--goldD)] border border-[rgba(212,167,79,.2)] flex items-center justify-center mb-3"><i class="fas fa-clock text-2xl text-[var(--gold)]"></i></div><p class="font-display text-lg tracking-wider text-[var(--fg2)] mb-1">${m.home.flag} ${m.home.code} vs ${m.away.code} ${m.away.flag}</p><p class="text-sm text-[var(--fg3)]">${new Date(m.date).toLocaleString([],{weekday:'long',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'})}</p><p class="text-xs text-[var(--fg3)] mt-1">${m.venue}</p>`}
-  else{showPh();document.getElementById('ph').innerHTML=`<div class="w-16 h-16 rounded-full bg-[var(--card)] border border-[var(--brd)] flex items-center justify-center mb-3"><i class="fas fa-flag-checkered text-2xl text-[var(--fg3)]"></i></div><p class="font-display text-lg tracking-wider text-[var(--fg2)]">Match Completed</p><p class="text-sm text-[var(--fg3)]">${m.home.flag} ${m.score.home} — ${m.score.away} ${m.away.flag}</p>`}
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+      // Build quality list from HLS levels
+      buildQualityList(
+        data.levels.map((l, i) => ({
+          index: i,
+          label: l.height ? `${l.height}p` : `${Math.round(l.bitrate / 1000)}k`,
+          height: l.height || 0,
+          bitrate: l.bitrate,
+        })),
+        'hls'
+      );
+      $video.play().catch(() => {});
+      resolve();
+    });
 
-  document.querySelectorAll('.mc').forEach(c=>c.classList.toggle('act',c.dataset.mid===id));
-  scrollTo('player-sec');
-}
+    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            toast('HLS network error, retrying...', 'error');
+            hlsInstance.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            toast('HLS media error, recovering...', 'error');
+            hlsInstance.recoverMediaError();
+            break;
+          default:
+            reject(new Error('Fatal HLS error: ' + data.details));
+            break;
+        }
+      }
+    });
 
-// Direct channel play
-async function playChannel(chId){
-  if(!S.live){toast('Connect worker first to play channels','error');openSet();return}
-  showPh();document.getElementById('ph').innerHTML='<div class="w-16 h-16 rounded-full bg-[var(--goldD)] flex items-center justify-center mb-3"><i class="fas fa-spinner fa-spin text-2xl text-[var(--gold)]"></i></div><p class="font-display text-lg tracking-wider text-[var(--fg2)]">SCRAPING STREAM...</p><p class="text-sm text-[var(--fg3)]">Extracting stream URL from blogspot page</p>';
-  document.getElementById('mib').classList.add('hidden');document.getElementById('eb').classList.add('hidden');document.getElementById('plb').classList.remove('hidden');
-  S.cur=null;document.querySelectorAll('.mc').forEach(c=>c.classList.remove('act'));
-  document.querySelectorAll('.ch-card').forEach(c=>c.classList.toggle('act',c.dataset.ch===chId));
-  const u=await A.stream(chId);
-  if(u){loadStream(u);toast('Channel stream loaded','success')}
-  else{showPh();toast('Failed to scrape stream — check debug in settings','error')}
+    currentMode = 'hls';
+  });
 }
 
-// ===== RENDER =====
-function renderLive(){
-  const l=S.matches.filter(m=>m.status==='live'),c=document.getElementById('lm'),n=document.getElementById('nl');
-  if(!l.length){c.innerHTML='';n.classList.remove('hidden');return}
-  n.classList.add('hidden');c.innerHTML=l.map(m=>rMC(m)).join('');
+// ===================== MP4 Playback =====================
+function startMP4(data) {
+  destroyPlayer();
+  hlsInstance = null;
+  currentMode = 'mp4';
+
+  // Sort formats by quality (height desc, then bitrate desc)
+  const formats = [...(data.formats || [])].sort((a, b) => {
+    const ha = a.height || 0, hb = b.height || 0;
+    if (hb !== ha) return hb - ha;
+    return (b.bitrate || 0) - (a.bitrate || 0);
+  });
+
+  if (formats.length === 0) {
+    throw new Error('No MP4 formats available');
+  }
+
+  // Build quality list
+  buildQualityList(
+    formats.map((f, i) => ({
+      index: i,
+      label: f.qualityLabel || f.quality || `${Math.round((f.bitrate || 0) / 1000)}k`,
+      height: f.height || 0,
+      bitrate: f.bitrate || 0,
+      url: f.url,
+    })),
+    'mp4'
+  );
+
+  // Play highest quality by default
+  playMP4Format(formats[0].url);
 }
 
-function rMC(m){
-  const a=S.cur&&S.cur.id===m.id;
-  const sb=m.status==='live'?`<div class="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--redD)]"><div class="w-1 h-1 rounded-full bg-[var(--red)] ldot"></div><span class="text-[9px] font-700 text-[var(--red)] tracking-wider">${m.minute}'</span></div>`:m.status==='completed'?`<span class="text-[9px] text-[var(--fg3)]">FT</span>`:`<span class="text-[9px] text-[var(--fg3)]">${new Date(m.date).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`;
-  return`<div class="mc ${a?'act':''}" data-mid="${m.id}" onclick="selMatch('${m.id}')"><div class="flex items-center justify-between mb-2"><span class="text-[10px] font-500 text-[var(--fg3)] tracking-wider uppercase">${m.stage}</span>${sb}</div><div class="flex items-center justify-between"><div class="flex items-center gap-2 flex-1 justify-end"><span class="text-xl">${m.home.flag}</span><span class="font-display text-xs font-500 tracking-wider">${m.home.code}</span></div><div class="flex items-center gap-2.5 px-3"><span class="font-display text-xl font-700">${m.score.home}</span><span class="text-[var(--fg3)]">-</span><span class="font-display text-xl font-700">${m.score.away}</span></div><div class="flex items-center gap-2 flex-1"><span class="font-display text-xs font-500 tracking-wider">${m.away.code}</span><span class="text-xl">${m.away.flag}</span></div></div><p class="text-[9px] text-[var(--fg3)] mt-1.5 text-center">${m.venue}</p></div>`;
+function playMP4Format(streamUrl) {
+  const proxyUrl = `${workerUrl}/proxy?url=${encodeURIComponent(streamUrl)}`;
+  $video.src = proxyUrl;
+  $video.play().catch(() => {});
 }
 
-function renderEv(ev){
-  const b=document.getElementById('eb'),l=document.getElementById('el');
-  if(!ev||!ev.length){b.classList.add('hidden');return}
-  b.classList.remove('hidden');
-  const s=[...ev].sort((a,b)=>a.minute-b.minute);
-  l.innerHTML=s.map(e=>{
-    const ic=e.type==='goal'?'<i class="fas fa-futbol text-[var(--gold)]"></i>':e.type==='yellow'?'<i class="fas fa-square text-yellow-400 text-[9px]"></i>':e.type==='red'?'<i class="fas fa-square text-[var(--red)] text-[9px]"></i>':'<i class="fas fa-info-circle text-[var(--fg3)]"></i>';
-    const sd=e.team==='home'?'text-left':e.team==='away'?'text-right':'text-center';
-    const as=e.assist?` (assist: ${e.assist})`:'';
-    return`<div class="ei"><span class="w-7 text-[11px] text-[var(--fg3)] font-mono">${e.minute}'</span><span class="w-5 text-center">${ic}</span><span class="flex-1 ${sd} text-[var(--fg2)]"><span class="font-500">${e.player}</span>${as}</span></div>`;
-  }).join('');
+// ===================== Quality List =====================
+function buildQualityList(qualities, mode) {
+  $qualityList.innerHTML = '';
+  $qualitySection.style.display = 'block';
+
+  // Auto option (for HLS)
+  if (mode === 'hls') {
+    const autoPill = createQPill('Auto', -1, true);
+    $qualityList.appendChild(autoPill);
+  }
+
+  qualities.forEach(q => {
+    const pill = createQPill(q.label, q.index, mode === 'hls' ? false : q.index === 0);
+    $qualityList.appendChild(pill);
+  });
 }
 
-function renderSched(){
-  const c=document.getElementById('sl');const g={};
-  S.matches.forEach(m=>{const k=`${m.stage} — MD ${m.md}`;if(!g[k])g[k]=[];g[k].push(m)});
-  c.innerHTML=Object.entries(g).map(([l,ms])=>`<div><h3 class="font-display text-xs font-500 tracking-widest text-[var(--fg3)] uppercase mb-2">${l}</h3><div class="space-y-1.5">${ms.map(m=>rMC(m)).join('')}</div></div>`).join('');
+function createQPill(label, index, isActive) {
+  const pill = document.createElement('button');
+  pill.className = `q-pill${isActive ? ' active' : ''}`;
+  pill.textContent = label;
+  pill.dataset.index = index;
+  pill.addEventListener('click', () => switchQuality(index));
+  return pill;
 }
 
-function renderStand(){
-  const c=document.getElementById('stl');
-  c.innerHTML=Object.entries(S.standings).map(([g,ts])=>`<div class="bg-[var(--card)] border border-[var(--brd)] rounded-xl overflow-hidden"><div class="px-3 py-2.5 border-b border-[var(--brd)]"><h3 class="font-display text-xs font-500 tracking-widest text-[var(--gold)]">${g}</h3></div><table class="st"><thead><tr><th class="w-5">#</th><th>Team</th><th class="text-center">P</th><th class="text-center">W</th><th class="text-center">D</th><th class="text-center">L</th><th class="text-center">GD</th><th class="text-center font-bold">Pts</th></tr></thead><tbody>${ts.map((t,i)=>`<tr class="${i<2?'q1':i===2?'q2':''}"><td class="text-[var(--fg3)]">${i+1}</td><td><span class="mr-1.5">${t.flag}</span>${t.team}</td><td class="text-center text-[var(--fg3)]">${t.p}</td><td class="text-center text-[var(--grn)]">${t.w}</td><td class="text-center text-[var(--fg3)]">${t.d}</td><td class="text-center text-[var(--red)]">${t.l}</td><td class="text-center text-[var(--fg3)]">${t.gf-t.ga>0?'+':''}${t.gf-t.ga}</td><td class="text-center font-700 text-[var(--fg)]">${t.pts}</td></tr>`).join('')}</tbody></table><div class="px-3 py-1.5 flex items-center gap-3 text-[9px] text-[var(--fg3)] border-t border-[var(--brd)]"><span><span class="inline-block w-1.5 h-1.5 rounded-full bg-[var(--grn)] mr-0.5"></span>Advance</span><span><span class="inline-block w-1.5 h-1.5 rounded-full bg-[#f59e0b] mr-0.5"></span>Playoff</span></div></div>`).join('');
+function switchQuality(index) {
+  // Update active state
+  document.querySelectorAll('.q-pill').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.q-pill[data-index="${index}"]`)?.classList.add('active');
+
+  if (currentMode === 'hls' && hlsInstance) {
+    if (index === -1) {
+      hlsInstance.currentLevel = -1; // Auto
+    } else {
+      hlsInstance.currentLevel = parseInt(index);
+    }
+  } else if (currentMode === 'mp4' && currentVideoData) {
+    const formats = [...(currentVideoData.formats || [])].sort((a, b) => {
+      const ha = a.height || 0, hb = b.height || 0;
+      if (hb !== ha) return hb - ha;
+      return (b.bitrate || 0) - (a.bitrate || 0);
+    });
+    if (formats[index] && formats[index].url) {
+      const currentTime = $video.currentTime;
+      const wasPaused = $video.paused;
+      playMP4Format(formats[index].url);
+      $video.addEventListener('loadeddata', function onLoaded() {
+        $video.currentTime = currentTime;
+        if (!wasPaused) $video.play().catch(() => {});
+        $video.removeEventListener('loadeddata', onLoaded);
+      });
+    }
+  }
 }
 
-async function renderChannels(){
-  const chs=await A.channels();
-  const c=document.getElementById('chl');
-  c.innerHTML=chs.map(ch=>`<div class="ch-card" data-ch="${ch.id}" onclick="playChannel('${ch.id}')"><i class="fas ${ch.icon||'fa-tv'} text-2xl text-[var(--gold)] mb-2"></i><p class="font-display text-sm tracking-wider">${ch.name}</p><p class="text-[10px] text-[var(--fg3)] mt-0.5 font-mono">${ch.id}</p>${ch.cached?'<div class="mt-1.5 inline-block px-1.5 py-0.5 rounded text-[8px] bg-[var(--grn)]/10 text-[var(--grn)]">Cached</div>':''}</div>`).join('');
+// ===================== Keyboard Shortcuts =====================
+document.addEventListener('keydown', (e) => {
+  // Don't trigger if typing in input
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  switch(e.key) {
+    case ' ':
+      e.preventDefault();
+      if ($video.paused) $video.play().catch(() => {});
+      else $video.pause();
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      $video.currentTime = Math.min($video.duration || 0, $video.currentTime + 10);
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      $video.currentTime = Math.max(0, $video.currentTime - 10);
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      $video.volume = Math.min(1, $video.volume + 0.1);
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      $video.volume = Math.max(0, $video.volume - 0.1);
+      break;
+    case 'f':
+    case 'F':
+      e.preventDefault();
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.getElementById('playerWrap').requestFullscreen().catch(() => {});
+      break;
+    case 'm':
+    case 'M':
+      e.preventDefault();
+      $video.muted = !$video.muted;
+      break;
+  }
+});
+
+// ===================== Auto-load if worker URL is set =====================
+if (workerUrl && $urlInput.value.trim()) {
+  // Auto-load on page ready
+  setTimeout(() => loadVideo(), 500);
 }
-
-// ===== TABS =====
-function switchT(t,el){document.querySelectorAll('.tb').forEach(b=>b.classList.remove('act'));document.querySelectorAll('.tp').forEach(p=>p.classList.add('hidden'));el.classList.add('act');document.getElementById('t-'+t).classList.remove('hidden');if(t==='channels')renderChannels()}
-function scrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})}
-
-// ===== LOAD DATA =====
-async function loadAll(){
-  try{const[m,st]=await Promise.all([A.get(),A.standings()]);S.matches=m;S.standings=st;renderLive();renderSched();renderStand()}
-  catch{S.live=false;setMode(false);S.matches=[...DM];S.standings=DS;renderLive();renderSched();renderStand();toast('Worker error — using demo data','error')}
-}
-
-// ===== DEMO SIM =====
-function startDemo(){
-  if(S.di)clearInterval(S.di);
-  S.di=setInterval(()=>{
-    if(S.live)return;let up=false;
-    S.matches.forEach(m=>{if(m.status==='live'){m.minute=Math.min(90,m.minute+1);up=true;
-      if(Math.random()<.03){const t=Math.random()<.5?'home':'away';const ps=t==='home'?['Pulisic','Weah','Reynolds','McKennie']:['Hakimi','Ziyech','Amrabat','En-Nesyri'];const p=ps[Math.floor(Math.random()*ps.length)];m.score[t]++;m.events.push({type:'goal',team:t,player:p,minute:m.minute});goalNotif(t==='home'?m.home.name:m.away.name,p);
-        if(S.cur&&S.cur.id===m.id){const el=document.getElementById(t==='home'?'ihs':'ias');el.classList.add('sf');setTimeout(()=>el.classList.remove('sf'),500);el.textContent=m.score[t];document.getElementById('imin').textContent=`${m.minute}'`;renderEv(m.events)}}
-      if(m.minute>=90){m.status='completed';m.minute=90;if(S.cur&&S.cur.id===m.id)selMatch(m.id)}
-      if(S.cur&&S.cur.id===m.id)document.getElementById('imin').textContent=`${m.minute}'`;
-    }});
-    if(up){S.cur=S.matches.find(m=>m.id===S.cur?.id)||null;renderLive();renderSched()}
-  },4000);
-}
-
-// ===== PARTICLES =====
-function initP(){
-  const c=document.getElementById('particles'),x=c.getContext('2d');let ps=[];const N=35;
-  function rs(){c.width=innerWidth;c.height=innerHeight}rs();addEventListener('resize',rs);
-  for(let i=0;i<N;i++)ps.push({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.2+.4,a:Math.random()*.4+.08});
-  (function d(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=c.width;if(p.x>c.width)p.x=0;if(p.y<0)p.y=c.height;if(p.y>c.height)p.y=0;x.beginPath();x.arc(p.x,p.y,Math.max(.1,p.r),0,Math.PI*2);x.fillStyle=`rgba(212,167,79,${p.a})`;x.fill()});
-  for(let i=0;i<ps.length;i++)for(let j=i+1;j<ps.length;j++){const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<140){x.beginPath();x.moveTo(ps[i].x,ps[i].y);x.lineTo(ps[j].x,ps[j].y);x.strokeStyle=`rgba(212,167,79,${.05*(1-dist/140)})`;x.lineWidth=.4;x.stroke()}}
-  requestAnimationFrame(d)})();
-}
-
-// ===== INIT =====
-async function init(){
-  initP();
-  document.getElementById('vid').addEventListener('play',updPI);
-  document.getElementById('vid').addEventListener('pause',updPI);
-  document.getElementById('vid').addEventListener('ended',updPI);
-  document.getElementById('vid').volume=.8;
-
-  if(S.wurl){const ok=await A.health();if(ok){S.live=true;setMode(true)}}
-  await loadAll();startDemo();
-  const fl=S.matches.find(m=>m.status==='live');if(fl)selMatch(fl.id);
-}
-
-document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
