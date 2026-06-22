@@ -1,1592 +1,986 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>KufaTV · FIFA World Cup 2026</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GoalStream · FIFA World Cup 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --void:#03070f;
+  --abyss:#060d1a;
+  --deep:#0a1628;
+  --mid:#0f1f35;
 
-    :root {
-      --bg-deep:     #040b14;
-      --bg-mid:      #071220;
-      --bg-card:     rgba(255,255,255,0.04);
-      --bg-card-h:   rgba(255,255,255,0.08);
-      --glass:       rgba(10,24,46,0.65);
-      --glass-lite:  rgba(255,255,255,0.06);
-      --border:      rgba(255,255,255,0.10);
-      --border-h:    rgba(255,255,255,0.20);
-      --gold:        #F5C518;
-      --gold2:       #D4A017;
-      --gold-glow:   rgba(245,197,24,0.25);
-      --red:         #C0392B;
-      --red2:        #E74C3C;
-      --green:       #27AE60;
-      --blue-acc:    #1A6FBA;
-      --blue-glow:   rgba(26,111,186,0.35);
-      --text:        #EEF2FF;
-      --text-dim:    rgba(238,242,255,0.5);
-      --text-faint:  rgba(238,242,255,0.25);
-      --font-h:      'Rajdhani', sans-serif;
-      --font-b:      'Inter', sans-serif;
-      --radius:      14px;
-      --radius-sm:   8px;
-      --sidebar-w:   300px;
-      --drawer-w:    320px;
-      --header-h:    60px;
-      --ticker-h:    38px;
-      --nav-h:       56px;
-    }
+  --g-glass:rgba(255,255,255,0.04);
+  --g-glass-md:rgba(255,255,255,0.07);
+  --g-glass-hi:rgba(255,255,255,0.11);
+  --g-blur:blur(24px) saturate(160%);
+  --g-blur-sm:blur(14px) saturate(140%);
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      background: var(--bg-deep);
-      color: var(--text);
-      font-family: var(--font-b);
-      -webkit-font-smoothing: antialiased;
-    }
+  --border:rgba(255,255,255,0.08);
+  --border-md:rgba(255,255,255,0.14);
+  --border-hi:rgba(255,255,255,0.22);
 
-    /* ─── ANIMATED BACKGROUND ─── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse 120% 70% at 20% -10%, rgba(26,111,186,0.28) 0%, transparent 55%),
-        radial-gradient(ellipse 80% 60% at 80% 110%, rgba(245,197,24,0.12) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 40% at 50% 50%, rgba(192,57,43,0.06) 0%, transparent 60%),
-        linear-gradient(180deg, #040b14 0%, #071220 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
+  --gold:#F7C948;
+  --gold2:#E5B62A;
+  --gold3:#C99B1A;
+  --gold-glow:rgba(247,201,72,0.22);
+  --gold-glow2:rgba(247,201,72,0.08);
 
-    body::after {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255,255,255,0.02) 60px),
-        repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255,255,255,0.015) 60px);
-      pointer-events: none;
-      z-index: 0;
-    }
+  --crimson:#E8334A;
+  --crimson-glow:rgba(232,51,74,0.25);
+  --emerald:#22C55E;
+  --emerald-glow:rgba(34,197,94,0.2);
+  --sky:#38BDF8;
 
-    /* ─── GLASS MIXIN CLASSES ─── */
-    .glass {
-      background: var(--glass);
-      backdrop-filter: blur(20px) saturate(1.4);
-      -webkit-backdrop-filter: blur(20px) saturate(1.4);
-      border: 1px solid var(--border);
-    }
-    .glass-lite {
-      background: var(--glass-lite);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-    }
+  --text:#F0F6FF;
+  --text-2:rgba(240,246,255,0.65);
+  --text-3:rgba(240,246,255,0.38);
+  --text-4:rgba(240,246,255,0.2);
 
-    /* ─── SCROLLBAR ─── */
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(245,197,24,0.3); border-radius: 2px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(245,197,24,0.6); }
+  --font:'Outfit',sans-serif;
+  --mono:'JetBrains Mono',monospace;
 
-    /* ─── LAYOUT SHELL ─── */
-    #app {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100dvh;
-      overflow: hidden;
-    }
+  --r:16px;
+  --r-sm:10px;
+  --r-xs:6px;
+  --sidebar:288px;
+  --drawer:300px;
+  --hdr:62px;
+}
 
-    /* ─── HEADER ─── */
-    #header {
-      height: var(--header-h);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
-      gap: 12px;
-      background: rgba(4,11,20,0.8);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      z-index: 50;
-    }
-    #header::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: 0.4;
-    }
+html,body{height:100%;overflow:hidden;background:var(--void);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;}
 
-    .logo-block {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-    .logo-icon {
-      width: 36px; height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-h);
-      font-weight: 700;
-      font-size: 13px;
-      color: #000;
-      letter-spacing: 0.05em;
-      box-shadow: 0 0 16px var(--gold-glow);
-    }
-    .logo-text {
-      display: flex; flex-direction: column; line-height: 1;
-    }
-    .logo-text .main {
-      font-family: var(--font-h);
-      font-weight: 700;
-      font-size: 20px;
-      letter-spacing: 0.08em;
-      color: var(--text);
-    }
-    .logo-text .main span { color: var(--gold); }
-    .logo-text .sub {
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      margin-top: 1px;
-    }
+/* ── BG LAYERS ── */
+#bg-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 100% 60% at -10% 0%,rgba(30,80,180,0.22) 0%,transparent 55%),
+    radial-gradient(ellipse 70% 50% at 110% 100%,rgba(247,201,72,0.10) 0%,transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,rgba(232,51,74,0.05) 0%,transparent 55%),
+    linear-gradient(170deg,#060d1a 0%,#03070f 100%);
+}
+#bg-canvas::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 63px,rgba(255,255,255,0.018) 64px),
+    repeating-linear-gradient(90deg,transparent,transparent 63px,rgba(255,255,255,0.013) 64px);
+}
 
-    /* FIFA 2026 Badge */
-    .wc-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px 4px 6px;
-      border-radius: 20px;
-      background: rgba(245,197,24,0.08);
-      border: 1px solid rgba(245,197,24,0.25);
-    }
-    .wc-badge img {
-      width: 22px; height: 22px; object-fit: contain;
-    }
-    .wc-badge span {
-      font-family: var(--font-h);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--gold);
-      letter-spacing: 0.05em;
-    }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(247,201,72,0.25);border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(247,201,72,0.5);}
 
-    /* Ticker strip */
-    #ticker-wrap {
-      flex: 1;
-      min-width: 0;
-      height: 30px;
-      border-radius: 6px;
-      overflow: hidden;
-      position: relative;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      display: none;
-    }
-    @media (min-width: 768px) { #ticker-wrap { display: flex; align-items: center; } }
+/* ── SHELL ── */
+#shell{position:relative;z-index:1;display:flex;flex-direction:column;height:100dvh;overflow:hidden;}
 
-    .ticker-label {
-      position: absolute; left: 0; top: 0; bottom: 0;
-      display: flex; align-items: center; gap: 6px;
-      padding: 0 10px;
-      background: linear-gradient(90deg, var(--bg-deep) 80%, transparent);
-      z-index: 2;
-      flex-shrink: 0;
-    }
-    .live-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--red2);
-      animation: livePulse 1.4s ease-in-out infinite;
-      box-shadow: 0 0 6px var(--red2);
-    }
-    @keyframes livePulse {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.7); }
-    }
-    .ticker-label span {
-      font-family: var(--font-h);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      color: var(--red2);
-    }
-    .ticker-scroll {
-      padding-left: 90px;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      animation: tickerMove 40s linear infinite;
-    }
-    .ticker-scroll:hover { animation-play-state: paused; }
-    @keyframes tickerMove {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
+/* ══ HEADER ══ */
+#hdr{
+  height:var(--hdr);flex-shrink:0;
+  display:flex;align-items:center;gap:12px;padding:0 18px;
+  background:rgba(6,13,26,0.82);
+  backdrop-filter:var(--g-blur);
+  -webkit-backdrop-filter:var(--g-blur);
+  border-bottom:1px solid var(--border);
+  position:relative;z-index:60;
+}
+#hdr::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,var(--gold) 40%,var(--gold) 60%,transparent 100%);
+  opacity:0.3;
+}
 
-    /* Nav tabs (header right) */
-    .nav-tabs {
-      display: flex;
-      gap: 2px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 3px;
-    }
-    .nav-tab {
-      font-family: var(--font-h);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      padding: 5px 12px;
-      border-radius: 6px;
-      border: none;
-      background: transparent;
-      color: var(--text-dim);
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex; align-items: center; gap: 5px;
-      white-space: nowrap;
-    }
-    .nav-tab.active {
-      background: linear-gradient(135deg, rgba(245,197,24,0.2), rgba(245,197,24,0.08));
-      color: var(--gold);
-      border: 1px solid rgba(245,197,24,0.3);
-      box-shadow: 0 0 10px rgba(245,197,24,0.12);
-    }
-    .nav-tab:hover:not(.active) {
-      background: var(--glass-lite);
-      color: var(--text);
-    }
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none;}
+.logo-mark{
+  width:38px;height:38px;border-radius:11px;
+  background:linear-gradient(145deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 20px var(--gold-glow),inset 0 1px 0 rgba(255,255,255,0.3);
+  font-size:17px;font-weight:900;color:#000;letter-spacing:-0.02em;
+  font-family:var(--font);
+}
+.logo-text{line-height:1;}
+.logo-name{font-size:19px;font-weight:800;letter-spacing:-0.03em;color:var(--text);}
+.logo-name em{color:var(--gold);font-style:normal;}
+.logo-sub{font-size:9px;font-weight:500;letter-spacing:0.18em;color:var(--text-3);text-transform:uppercase;margin-top:1px;}
 
-    /* ─── MAIN BODY ─── */
-    #body {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-      position: relative;
-    }
+/* Ticker */
+#ticker-shell{
+  flex:1;min-width:0;height:32px;
+  border-radius:8px;overflow:hidden;position:relative;
+  background:rgba(255,255,255,0.025);border:1px solid var(--border);
+  display:none;
+}
+@media(min-width:720px){#ticker-shell{display:flex;align-items:center;}}
+.ticker-badge{
+  position:absolute;left:0;top:0;bottom:0;z-index:2;
+  display:flex;align-items:center;gap:6px;padding:0 12px;
+  background:linear-gradient(90deg,var(--abyss) 75%,transparent);
+}
+.live-pip{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--crimson);
+  box-shadow:0 0 8px var(--crimson);
+  animation:pip 1.4s ease-in-out infinite;
+}
+@keyframes pip{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.65);}}
+.ticker-badge span{font-size:9px;font-weight:700;letter-spacing:0.18em;color:var(--crimson);}
+.ticker-track{padding-left:88px;white-space:nowrap;display:flex;align-items:center;animation:tick 45s linear infinite;}
+.ticker-track:hover{animation-play-state:paused;}
+@keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
-    /* ─── LEFT SIDEBAR ─── */
-    #sidebar {
-      width: var(--sidebar-w);
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      background: rgba(4,11,20,0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-right: 1px solid var(--border);
-      position: relative;
-      z-index: 20;
-      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-    }
-    @media (max-width: 900px) {
-      #sidebar {
-        position: absolute;
-        top: 0; left: 0; bottom: 0;
-        z-index: 100;
-        transform: translateX(-100%);
-      }
-      #sidebar.open { transform: translateX(0); }
-    }
+/* Nav */
+.nav-group{display:flex;gap:2px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:3px;flex-shrink:0;}
+.nav-btn{
+  font-size:11px;font-weight:700;letter-spacing:0.06em;
+  padding:6px 14px;border-radius:8px;border:none;
+  background:transparent;color:var(--text-3);cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.nav-btn.on{
+  background:linear-gradient(145deg,rgba(247,201,72,0.18),rgba(247,201,72,0.07));
+  color:var(--gold);border:1px solid rgba(247,201,72,0.28);
+  box-shadow:0 0 14px var(--gold-glow2),inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.nav-btn:hover:not(.on){background:rgba(255,255,255,0.05);color:var(--text-2);}
 
-    .sidebar-head {
-      padding: 14px 14px 10px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .sidebar-title {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .sidebar-title h2 {
-      font-family: var(--font-h);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      color: var(--text-dim);
-      display: flex; align-items: center; gap: 6px;
-    }
-    .sidebar-title h2 i { color: var(--gold); }
-    .ch-count {
-      font-family: var(--font-h);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: var(--gold);
-      padding: 2px 8px;
-      border-radius: 10px;
-      background: rgba(245,197,24,0.1);
-      border: 1px solid rgba(245,197,24,0.2);
-    }
+/* Hamburger */
+#mob-menu-btn{display:none;}
+@media(max-width:860px){#mob-menu-btn{display:flex;}}
 
-    .search-bar {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 6px 10px;
-      margin-bottom: 10px;
-      transition: border-color 0.2s;
-    }
-    .search-bar:focus-within { border-color: rgba(245,197,24,0.4); }
-    .search-bar i { color: var(--text-faint); font-size: 11px; }
-    .search-bar input {
-      background: none; border: none; outline: none;
-      color: var(--text); font-family: var(--font-b); font-size: 12px;
-      width: 100%;
-    }
-    .search-bar input::placeholder { color: var(--text-faint); }
+/* ══ BODY ══ */
+#body-row{flex:1;display:flex;overflow:hidden;position:relative;}
 
-    .cat-chips {
-      display: flex; gap: 4px;
-      overflow-x: auto; padding-bottom: 2px;
-    }
-    .cat-chips::-webkit-scrollbar { height: 2px; }
-    .cat-chip {
-      font-family: var(--font-h);
-      font-size: 10px; font-weight: 600;
-      letter-spacing: 0.08em;
-      padding: 3px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-dim);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .cat-chip:hover { border-color: var(--border-h); color: var(--text); }
-    .cat-chip.active {
-      background: linear-gradient(135deg, rgba(245,197,24,0.25), rgba(245,197,24,0.1));
-      border-color: rgba(245,197,24,0.5);
-      color: var(--gold);
-    }
+/* ══ SIDEBAR ══ */
+#sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  display:flex;flex-direction:column;
+  background:rgba(6,13,26,0.78);
+  backdrop-filter:var(--g-blur);-webkit-backdrop-filter:var(--g-blur);
+  border-right:1px solid var(--border);
+  position:relative;z-index:30;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+@media(max-width:860px){
+  #sidebar{position:absolute;top:0;left:0;bottom:0;z-index:110;transform:translateX(-100%);}
+  #sidebar.open{transform:translateX(0);}
+}
+.sidebar-hd{padding:14px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sidebar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sidebar-top h2{font-size:11px;font-weight:700;letter-spacing:0.15em;color:var(--text-3);display:flex;align-items:center;gap:6px;}
+.sidebar-top h2 i{color:var(--gold);font-size:10px;}
+.ch-badge{
+  font-size:9px;font-weight:700;letter-spacing:0.1em;
+  padding:2px 8px;border-radius:10px;
+  background:rgba(247,201,72,0.1);border:1px solid rgba(247,201,72,0.22);color:var(--gold);
+}
+.search-wrap{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:7px 11px;margin-bottom:10px;
+  transition:border-color .2s;
+}
+.search-wrap:focus-within{border-color:rgba(247,201,72,0.35);}
+.search-wrap i{color:var(--text-4);font-size:11px;}
+.search-wrap input{background:none;border:none;outline:none;color:var(--text);font-family:var(--font);font-size:12px;width:100%;}
+.search-wrap input::placeholder{color:var(--text-4);}
+.cat-row{display:flex;gap:4px;overflow-x:auto;padding-bottom:1px;}
+.cat-row::-webkit-scrollbar{height:2px;}
+.cat-pill{
+  font-size:10px;font-weight:600;letter-spacing:0.06em;
+  padding:3px 11px;border-radius:20px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text-3);cursor:pointer;white-space:nowrap;transition:all .18s;
+}
+.cat-pill:hover{border-color:var(--border-md);color:var(--text-2);}
+.cat-pill.on{background:rgba(247,201,72,0.12);border-color:rgba(247,201,72,0.35);color:var(--gold);}
+#ch-list{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:3px;}
 
-    #channels-list {
-      flex: 1; overflow-y: auto; padding: 10px;
-      display: flex; flex-direction: column; gap: 5px;
-    }
+/* Channel item */
+.ch-row{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 9px;border-radius:var(--r-sm);
+  border:1px solid transparent;cursor:pointer;
+  transition:all .18s;position:relative;overflow:hidden;
+}
+.ch-row::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--gold);opacity:0;border-radius:0 3px 3px 0;transition:opacity .18s;
+}
+.ch-row:hover{background:var(--g-glass);border-color:var(--border);}
+.ch-row.on{background:rgba(247,201,72,0.07);border-color:rgba(247,201,72,0.22);}
+.ch-row.on::before{opacity:1;}
+.ch-thumb{
+  width:36px;height:36px;flex-shrink:0;border-radius:9px;
+  background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.ch-thumb img{width:100%;height:100%;object-fit:contain;padding:3px;}
+.ch-thumb-ph{color:var(--gold);font-size:13px;}
+.ch-meta{flex:1;min-width:0;}
+.ch-nm{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .18s;}
+.ch-row.on .ch-nm{color:var(--gold);}
+.ch-cat{font-size:9px;font-weight:500;letter-spacing:0.1em;color:var(--text-4);text-transform:uppercase;margin-top:1px;}
+.ch-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.ch-num{font-family:var(--mono);font-size:9px;color:var(--text-4);}
+.ch-dot{width:5px;height:5px;border-radius:50%;}
+.ch-dot.live{background:var(--crimson);box-shadow:0 0 6px var(--crimson);animation:pip 1.4s ease-in-out infinite;}
+.ch-dot.off{background:rgba(255,255,255,0.1);}
 
-    .ch-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 9px 10px;
-      border-radius: var(--radius-sm);
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-    .ch-item::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(245,197,24,0.05), transparent);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .ch-item:hover { background: var(--bg-card-h); border-color: var(--border); }
-    .ch-item:hover::before { opacity: 1; }
-    .ch-item.active {
-      background: linear-gradient(90deg, rgba(245,197,24,0.12), rgba(245,197,24,0.04));
-      border-color: rgba(245,197,24,0.35);
-    }
-    .ch-item.active::before { opacity: 1; }
-    .ch-logo {
-      width: 34px; height: 34px; flex-shrink: 0;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-    }
-    .ch-logo img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
-    .ch-logo-ph { color: var(--gold); font-size: 14px; }
-    .ch-info { flex: 1; min-width: 0; }
-    .ch-name {
-      font-size: 12px; font-weight: 600;
-      color: var(--text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      transition: color 0.2s;
-    }
-    .ch-item.active .ch-name { color: var(--gold); }
-    .ch-cat {
-      font-family: var(--font-h);
-      font-size: 9px; font-weight: 500;
-      letter-spacing: 0.1em;
-      color: var(--text-faint);
-      text-transform: uppercase;
-    }
-    .ch-num {
-      font-family: var(--font-h);
-      font-size: 10px; font-weight: 600;
-      color: var(--text-faint);
-    }
-    .ch-live-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .ch-live-dot.on {
-      background: var(--red2);
-      box-shadow: 0 0 6px var(--red2);
-      animation: livePulse 1.4s ease-in-out infinite;
-    }
-    .ch-live-dot.off { background: rgba(255,255,255,0.1); }
+/* ══ CENTER ══ */
+#center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 
-    /* ─── MAIN CENTER ─── */
-    #center {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-width: 0;
-    }
+/* TV PANEL */
+#tv-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+@media(min-width:1060px){#tv-panel{flex-direction:row;}}
 
-    /* ─── TV PANEL ─── */
-    #tv-panel {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    @media (min-width: 1100px) {
-      #tv-panel { flex-direction: row; }
-    }
+/* Player zone */
+#player-zone{flex:1;display:flex;flex-direction:column;padding:12px;gap:10px;overflow:hidden;min-width:0;}
 
-    /* Player area */
-    #player-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 12px;
-      gap: 10px;
-      overflow: hidden;
-      min-width: 0;
-    }
+/* THE PLAYER */
+#player-wrap{
+  flex:1;position:relative;border-radius:var(--r);overflow:hidden;
+  background:#000;min-height:200px;
+  box-shadow:0 0 0 1px var(--border),0 24px 64px rgba(0,0,0,0.7),0 0 60px rgba(30,80,180,0.06);
+}
+#player-wrap::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:var(--r);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05),inset 0 1px 0 rgba(255,255,255,0.08);
+}
 
-    /* Player frame */
-    #player-frame {
-      flex: 1;
-      position: relative;
-      border-radius: var(--radius);
-      overflow: hidden;
-      background: #000;
-      box-shadow:
-        0 0 0 1px var(--border),
-        0 20px 60px rgba(0,0,0,0.6),
-        0 0 40px rgba(26,111,186,0.08);
-      min-height: 0;
-    }
+#player-video,#player-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;border-radius:var(--r);}
+#player-iframe{display:none;}
 
-    #player-frame::before {
-      content: '';
-      position: absolute; inset: 0;
-      border-radius: var(--radius);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
-      pointer-events: none;
-      z-index: 5;
-    }
+/* Overlay */
+#player-overlay{
+  position:absolute;inset:0;z-index:20;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  background:rgba(3,7,15,0.88);border-radius:var(--r);
+  transition:opacity .35s;
+}
+.loader-ring{
+  width:46px;height:46px;border-radius:50%;
+  border:2px solid rgba(247,201,72,0.15);
+  border-top:2px solid var(--gold);
+  animation:spin .85s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+#overlay-msg{
+  font-size:11px;font-weight:700;letter-spacing:0.14em;
+  color:var(--gold);text-align:center;max-width:200px;line-height:1.5;
+}
 
-    #tv-video-player, #tv-iframe-player {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      border: none;
-      border-radius: var(--radius);
-    }
-    #tv-iframe-player { display: none; }
+/* Hover controls bar */
+#ctrl-bar{
+  position:absolute;bottom:0;left:0;right:0;z-index:30;
+  padding:14px 16px 16px;
+  background:linear-gradient(to top,rgba(0,0,0,0.75) 0%,transparent 100%);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .25s,transform .25s;
+}
+#player-wrap:hover #ctrl-bar,#player-wrap:focus-within #ctrl-bar{opacity:1;transform:translateY(0);}
 
-    /* Overlay */
-    #stream-overlay {
-      position: absolute; inset: 0; z-index: 20;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 14px;
-      background: rgba(4,11,20,0.88);
-      transition: opacity 0.4s;
-      border-radius: var(--radius);
-    }
-    .spin-ring {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      border: 2px solid rgba(245,197,24,0.2);
-      border-top-color: var(--gold);
-      animation: spin 0.9s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #overlay-label {
-      font-family: var(--font-h);
-      font-size: 12px; font-weight: 600;
-      letter-spacing: 0.12em;
-      color: var(--gold);
-      text-align: center;
-    }
+.ctrl-cluster{display:flex;align-items:center;gap:8px;}
+.icn-btn{
+  width:34px;height:34px;border-radius:9px;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.15);color:var(--text);
+  transition:all .18s;
+}
+.icn-btn:hover{background:rgba(247,201,72,0.2);border-color:rgba(247,201,72,0.5);color:var(--gold);}
+.icn-btn.active-state{background:rgba(232,51,74,0.15);border-color:rgba(232,51,74,0.4);color:var(--crimson);}
 
-    /* Player hover controls */
-    #player-controls {
-      position: absolute;
-      bottom: 12px; left: 12px; right: 12px;
-      z-index: 30;
-      border-radius: 10px;
-      padding: 10px 14px;
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      background: rgba(4,11,20,0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: all 0.25s;
-    }
-    #player-frame:hover #player-controls { opacity: 1; transform: translateY(0); }
+.vol-range{
+  -webkit-appearance:none;width:84px;height:3px;border-radius:2px;
+  background:rgba(255,255,255,0.18);outline:none;cursor:pointer;accent-color:var(--gold);
+}
+.vol-range::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 0 8px var(--gold-glow);}
 
-    .vol-group { display: flex; align-items: center; gap: 8px; }
-    .ctrl-btn {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--border);
-      color: var(--text);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-      transition: all 0.2s;
-    }
-    .ctrl-btn:hover { background: rgba(245,197,24,0.15); border-color: rgba(245,197,24,0.4); color: var(--gold); }
+.live-tag{display:flex;align-items:center;gap:6px;}
+.live-tag span{font-size:10px;font-weight:700;letter-spacing:0.14em;color:rgba(255,255,255,0.5);}
 
-    .vol-slider {
-      -webkit-appearance: none;
-      width: 80px; height: 3px;
-      border-radius: 2px;
-      background: rgba(255,255,255,0.15);
-      outline: none;
-      accent-color: var(--gold);
-    }
-    .vol-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: var(--gold);
-      cursor: pointer;
-      box-shadow: 0 0 6px var(--gold-glow);
-    }
+/* Fullscreen helper */
+#player-wrap:-webkit-full-screen{width:100vw!important;height:100vh!important;border-radius:0!important;}
+#player-wrap:-moz-full-screen{width:100vw!important;height:100vh!important;border-radius:0!important;}
+#player-wrap:fullscreen{width:100vw!important;height:100vh!important;border-radius:0!important;}
+#player-video:-webkit-full-screen,#player-iframe:-webkit-full-screen{width:100%!important;height:100%!important;}
 
-    .stream-status-pill {
-      display: flex; align-items: center; gap: 6px;
-      font-family: var(--font-h);
-      font-size: 10px; font-weight: 600;
-      letter-spacing: 0.1em;
-      color: var(--red2);
-    }
+/* Info bar */
+#info-bar{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;flex-shrink:0;}
 
-    /* Bottom info bar */
-    #info-bar {
-      flex-shrink: 0;
-      display: flex; align-items: center; gap: 10px;
-      flex-wrap: wrap;
-    }
+.now-card{
+  display:flex;align-items:center;gap:10px;padding:9px 13px;
+  border-radius:var(--r-sm);flex:1;min-width:170px;
+  background:var(--g-glass);backdrop-filter:var(--g-blur-sm);-webkit-backdrop-filter:var(--g-blur-sm);
+  border:1px solid var(--border);
+  box-shadow:0 0 20px var(--gold-glow2),inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.now-logo{
+  width:34px;height:34px;border-radius:9px;overflow:hidden;flex-shrink:0;
+  background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;
+}
+.now-logo img{width:100%;height:100%;object-fit:contain;}
+.now-lbl{font-size:9px;font-weight:600;letter-spacing:0.12em;color:var(--text-4);text-transform:uppercase;}
+.now-name{font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
 
-    .active-channel-card {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      flex: 1; min-width: 180px;
-    }
-    .acc-logo {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.06);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .acc-logo img { width: 100%; height: 100%; object-fit: contain; }
-    .acc-meta { min-width: 0; }
-    .acc-label { font-size: 9px; letter-spacing: 0.1em; color: var(--text-faint); text-transform: uppercase; font-family: var(--font-h); }
-    .acc-name {
-      font-weight: 600; font-size: 13px;
-      color: var(--gold);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      max-width: 200px;
-    }
+.stats-card{
+  display:flex;align-items:center;gap:0;
+  background:var(--g-glass);backdrop-filter:var(--g-blur-sm);-webkit-backdrop-filter:var(--g-blur-sm);
+  border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;flex-shrink:0;
+}
+.stat-seg{
+  padding:9px 14px;text-align:center;
+  border-right:1px solid var(--border);
+}
+.stat-seg:last-child{border-right:none;}
+.stat-lbl{font-size:9px;font-weight:600;letter-spacing:0.12em;color:var(--text-4);text-transform:uppercase;}
+.stat-val{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:2px;}
 
-    .stat-pill {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .stat-item { text-align: center; }
-    .stat-item + .stat-item { padding-left: 14px; border-left: 1px solid var(--border); }
-    .stat-label { font-family: var(--font-h); font-size: 9px; letter-spacing: 0.1em; color: var(--text-faint); text-transform: uppercase; }
-    .stat-val { font-family: var(--font-h); font-size: 12px; font-weight: 600; color: var(--text); margin-top: 1px; }
-    #proxy-status { color: var(--green); }
-    #api-status   { color: var(--green); }
+/* Inline match scroll (≤1059px) */
+#inline-matches{border-top:1px solid var(--border);flex-shrink:0;}
+@media(min-width:1060px){#inline-matches{display:none;}}
+#inline-inner{display:flex;gap:7px;padding:9px 12px;overflow-x:auto;}
+#inline-inner::-webkit-scrollbar{height:2px;}
+.mini-card{
+  flex-shrink:0;min-width:150px;padding:8px 11px;border-radius:var(--r-sm);
+  background:var(--g-glass);border:1px solid var(--border);
+}
+.mini-sc{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--gold);text-align:center;}
+.mini-teams{font-size:9px;color:var(--text-3);text-align:center;margin-top:2px;}
+.mini-st{font-size:9px;font-weight:700;letter-spacing:0.1em;text-align:center;margin-top:3px;}
+.mini-st.live{color:var(--crimson);}
+.mini-st.done{color:var(--emerald);}
+.mini-st.pre{color:var(--text-4);}
 
-    /* ─── RIGHT DRAWER ─── */
-    #match-drawer {
-      width: var(--drawer-w);
-      flex-shrink: 0;
-      display: flex; flex-direction: column;
-      background: rgba(4,11,20,0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-left: 1px solid var(--border);
-    }
-    @media (max-width: 1099px) { #match-drawer { display: none; } }
+/* ══ RIGHT DRAWER ══ */
+#drawer{
+  width:var(--drawer);flex-shrink:0;
+  display:flex;flex-direction:column;
+  background:rgba(6,13,26,0.72);
+  backdrop-filter:var(--g-blur);-webkit-backdrop-filter:var(--g-blur);
+  border-left:1px solid var(--border);
+}
+@media(max-width:1059px){#drawer{display:none;}}
+.drawer-hd{
+  padding:14px 14px 12px;border-bottom:1px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.drawer-hd h3{font-size:12px;font-weight:700;letter-spacing:0.14em;color:var(--gold);display:flex;align-items:center;gap:7px;}
+.refresh-indicator{
+  font-family:var(--mono);font-size:9px;color:var(--text-4);
+  display:flex;align-items:center;gap:4px;
+}
+.refresh-dot{width:5px;height:5px;border-radius:50%;background:var(--emerald);animation:pip 1.4s ease-in-out infinite;}
+#drawer-list{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:7px;}
 
-    .drawer-head {
-      padding: 14px 14px 10px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .drawer-head h3 {
-      font-family: var(--font-h);
-      font-size: 13px; font-weight: 600;
-      letter-spacing: 0.12em;
-      color: var(--gold);
-      display: flex; align-items: center; gap: 6px;
-    }
+/* Match card */
+.match-card{
+  border-radius:var(--r-sm);
+  background:var(--g-glass);
+  border:1px solid var(--border);
+  padding:10px 11px;
+  transition:border-color .18s,background .18s;
+  cursor:default;
+}
+.match-card:hover{border-color:var(--border-md);background:var(--g-glass-md);}
+.match-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.match-comp{font-size:9px;font-weight:600;letter-spacing:0.1em;color:var(--text-4);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
+.match-pill{font-size:8px;font-weight:800;letter-spacing:0.1em;padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.match-pill.live{background:rgba(232,51,74,0.14);color:var(--crimson);border:1px solid rgba(232,51,74,0.28);animation:pip 1.4s ease-in-out infinite;}
+.match-pill.done{background:rgba(34,197,94,0.08);color:var(--emerald);border:1px solid rgba(34,197,94,0.2);}
+.match-pill.pre{background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--border);}
+.match-body{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+.match-team{display:flex;flex-direction:column;align-items:center;gap:5px;width:36%;}
+.match-team img{width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));}
+.match-team-nm{font-size:10px;font-weight:600;text-align:center;line-height:1.25;color:var(--text-2);}
+.match-score{
+  font-family:var(--mono);font-size:22px;font-weight:700;color:var(--gold);
+  background:rgba(247,201,72,0.07);border:1px solid rgba(247,201,72,0.16);
+  border-radius:var(--r-xs);padding:5px 13px;min-width:64px;text-align:center;
+}
 
-    #drawer-list {
-      flex: 1; overflow-y: auto; padding: 10px;
-      display: flex; flex-direction: column; gap: 8px;
-    }
+/* ══ HUB VIEW ══ */
+#hub-panel{flex:1;overflow-y:auto;padding:14px;display:none;}
+#hub-panel.on{display:block;}
+.hub-title{font-size:20px;font-weight:800;letter-spacing:-0.02em;color:var(--gold);display:flex;align-items:center;gap:9px;margin-bottom:16px;}
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;max-width:1200px;margin:0 auto;}
+.grp-card{
+  border-radius:var(--r);
+  background:var(--g-glass);
+  backdrop-filter:var(--g-blur-sm);-webkit-backdrop-filter:var(--g-blur-sm);
+  border:1px solid var(--border);padding:14px;
+}
+.grp-nm{font-size:12px;font-weight:800;letter-spacing:0.1em;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.grp-nm::before{content:'';display:block;width:3px;height:14px;background:var(--gold);border-radius:2px;box-shadow:0 0 8px var(--gold-glow);}
+.grp-table{width:100%;border-collapse:collapse;}
+.grp-table th{font-size:9px;font-weight:700;letter-spacing:0.1em;color:var(--text-4);text-transform:uppercase;padding:3px 4px;}
+.grp-table th:first-child{text-align:left;}
+.grp-table th:not(:first-child){text-align:right;}
+.grp-table td{font-size:11px;font-weight:500;padding:5px 4px;border-top:1px solid rgba(255,255,255,0.05);}
+.grp-table td.pos{color:var(--text-4);font-family:var(--mono);font-size:9px;width:18px;}
+.grp-table td.pts{color:var(--gold);font-weight:800;font-family:var(--mono);font-size:13px;text-align:right;}
+.grp-table td:not(.pos):not(.pts){text-align:right;color:var(--text-3);}
+.team-cell{display:flex;align-items:center;gap:7px;}
+.team-cell img{width:16px;height:16px;object-fit:contain;}
+.team-cell span{font-size:11px;font-weight:600;color:var(--text-2);}
 
-    .match-card {
-      border-radius: var(--radius-sm);
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 10px;
-      transition: border-color 0.2s;
-    }
-    .match-card:hover { border-color: var(--border-h); }
+/* ══ MOBILE NAV ══ */
+#mob-nav{
+  display:none;height:54px;
+  background:rgba(6,13,26,0.92);
+  backdrop-filter:var(--g-blur);-webkit-backdrop-filter:var(--g-blur);
+  border-top:1px solid var(--border);flex-shrink:0;
+  position:relative;z-index:60;
+}
+@media(max-width:860px){#mob-nav{display:flex;align-items:stretch;}}
+.mob-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;border:none;background:transparent;
+  color:var(--text-4);cursor:pointer;transition:all .18s;
+  font-size:9px;font-family:var(--font);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+}
+.mob-btn i{font-size:17px;}
+.mob-btn.on{color:var(--gold);}
+.mob-btn.on i{filter:drop-shadow(0 0 6px var(--gold));}
 
-    .match-card-head {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px; padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-    .match-league {
-      font-family: var(--font-h);
-      font-size: 9px; font-weight: 600;
-      letter-spacing: 0.1em;
-      color: var(--text-faint);
-      text-transform: uppercase;
-      overflow: hidden; text-overflow: ellipsis;
-      white-space: nowrap; max-width: 160px;
-    }
-    .match-status {
-      font-family: var(--font-h);
-      font-size: 9px; font-weight: 700;
-      letter-spacing: 0.08em;
-      padding: 2px 7px;
-      border-radius: 10px;
-    }
-    .match-status.live {
-      background: rgba(231,76,60,0.15);
-      color: var(--red2);
-      border: 1px solid rgba(231,76,60,0.3);
-      animation: livePulse 1.4s ease-in-out infinite;
-    }
-    .match-status.sched {
-      background: rgba(255,255,255,0.05);
-      color: var(--text-faint);
-      border: 1px solid var(--border);
-    }
-    .match-status.done {
-      background: rgba(39,174,96,0.08);
-      color: var(--green);
-      border: 1px solid rgba(39,174,96,0.2);
-    }
+/* ══ MISC ══ */
+#mob-scrim{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.55);}
+@media(max-width:860px){#mob-scrim.on{display:block;}}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:28px 16px;text-align:center;}
+.empty i{font-size:26px;color:var(--text-4);}
+.empty p{font-size:10px;font-weight:600;letter-spacing:0.14em;color:var(--text-4);}
 
-    .match-teams {
-      display: flex; align-items: center; justify-content: space-between; gap: 4px;
-    }
-    .match-team {
-      display: flex; flex-direction: column; align-items: center; gap: 5px;
-      width: 38%;
-    }
-    .match-team img {
-      width: 30px; height: 30px; object-fit: contain;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
-    }
-    .match-team-name {
-      font-size: 10px; font-weight: 600;
-      text-align: center; line-height: 1.2;
-      color: var(--text);
-    }
-    .match-score {
-      font-family: var(--font-h);
-      font-size: 20px; font-weight: 700;
-      color: var(--gold);
-      background: rgba(245,197,24,0.08);
-      border: 1px solid rgba(245,197,24,0.2);
-      border-radius: 8px;
-      padding: 4px 12px;
-      min-width: 60px;
-      text-align: center;
-      letter-spacing: 0.05em;
-    }
-
-    /* ─── STANDINGS HUB VIEW ─── */
-    #hub-panel {
-      flex: 1; overflow-y: auto; padding: 14px;
-      display: none;
-    }
-    #hub-panel.show { display: block; }
-
-    .hub-inner {
-      max-width: 1200px; margin: 0 auto;
-    }
-    .hub-title {
-      font-family: var(--font-h);
-      font-size: 20px; font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--gold);
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 16px;
-    }
-    .standings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 12px;
-    }
-    .group-card {
-      border-radius: var(--radius);
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 14px;
-      overflow: hidden;
-    }
-    .group-name {
-      font-family: var(--font-h);
-      font-size: 13px; font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--gold);
-      margin-bottom: 10px;
-    }
-    .group-table { width: 100%; border-collapse: collapse; }
-    .group-table th {
-      font-family: var(--font-h);
-      font-size: 9px; letter-spacing: 0.1em;
-      color: var(--text-faint);
-      text-transform: uppercase;
-      padding: 3px 4px;
-      text-align: right;
-    }
-    .group-table th:first-child { text-align: left; }
-    .group-table td {
-      font-size: 11px; font-weight: 500;
-      padding: 5px 4px;
-      color: var(--text);
-      border-top: 1px solid var(--border);
-    }
-    .group-table td:first-child { color: var(--text-dim); font-size: 10px; }
-    .group-table td.pts { color: var(--gold); font-weight: 700; font-family: var(--font-h); font-size: 13px; }
-    .team-cell { display: flex; align-items: center; gap: 6px; }
-    .team-cell img { width: 16px; height: 16px; object-fit: contain; }
-    .team-cell span { font-size: 11px; font-weight: 600; }
-
-    /* ─── MOBILE BOTTOM NAV ─── */
-    #mobile-nav {
-      display: none;
-      height: var(--nav-h);
-      background: rgba(4,11,20,0.9);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    @media (max-width: 900px) {
-      #mobile-nav {
-        display: flex;
-        align-items: stretch;
-        position: relative; z-index: 60;
-      }
-    }
-    .mob-nav-btn {
-      flex: 1;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 3px;
-      border: none; background: transparent;
-      color: var(--text-faint);
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 9px; font-family: var(--font-h);
-      letter-spacing: 0.08em;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .mob-nav-btn i { font-size: 16px; }
-    .mob-nav-btn.active { color: var(--gold); }
-    .mob-nav-btn.active i { filter: drop-shadow(0 0 6px var(--gold)); }
-    #mob-overlay {
-      display: none;
-      position: fixed; inset: 0; z-index: 90;
-      background: rgba(0,0,0,0.5);
-    }
-    @media (max-width: 900px) {
-      #mob-overlay.visible { display: block; }
-    }
-
-    /* ─── MOBILE MATCHES PANEL ─── */
-    #mob-matches {
-      display: none;
-    }
-    @media (max-width: 1099px) {
-      /* show matches inline below player on tablet */
-    }
-
-    /* ─── HELPERS ─── */
-    .hidden { display: none !important; }
-    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
-
-    /* ─── SHIMMER FOR EMPTY STATES ─── */
-    .empty-state {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 8px; padding: 30px 20px; text-align: center;
-    }
-    .empty-state i { font-size: 28px; color: var(--text-faint); }
-    .empty-state p { font-family: var(--font-h); font-size: 11px; letter-spacing: 0.1em; color: var(--text-faint); }
-
-    /* Glow accent on active channel card */
-    @keyframes goldGlow {
-      0%,100% { box-shadow: 0 0 0 1px rgba(245,197,24,0.35), 0 0 20px rgba(245,197,24,0.06); }
-      50% { box-shadow: 0 0 0 1px rgba(245,197,24,0.5), 0 0 30px rgba(245,197,24,0.12); }
-    }
-    .active-channel-card { animation: goldGlow 3s ease-in-out infinite; }
-
-    /* Inline matches on mobile/tablet */
-    #inline-matches {
-      flex-shrink: 0;
-      max-height: 200px;
-      overflow-y: auto;
-      border-top: 1px solid var(--border);
-    }
-    @media (min-width: 1100px) { #inline-matches { display: none; } }
-    #inline-matches-inner {
-      display: flex; gap: 8px; padding: 10px;
-      overflow-x: auto;
-    }
-    #inline-matches-inner::-webkit-scrollbar { height: 3px; }
-    .mini-match {
-      flex-shrink: 0;
-      border-radius: 10px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 8px 12px;
-      min-width: 160px;
-    }
-    .mini-match-score {
-      font-family: var(--font-h);
-      font-size: 16px; font-weight: 700;
-      color: var(--gold);
-      text-align: center;
-    }
-    .mini-match-teams {
-      font-size: 10px; font-weight: 500; color: var(--text-dim);
-      text-align: center; margin-top: 3px;
-    }
-    .mini-match-status {
-      font-family: var(--font-h);
-      font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
-      text-align: center; margin-top: 4px;
-    }
-    .mini-match-status.live { color: var(--red2); }
-    .mini-match-status.sched { color: var(--text-faint); }
-  </style>
+/* highlight first group */
+.grp-table tr:first-child td{color:var(--text);}
+</style>
 </head>
 <body>
-<div id="app">
+<div id="bg-canvas"></div>
+<div id="shell">
 
-  <!-- ═══ HEADER ═══ -->
-  <header id="header">
-    <div class="logo-block">
-      <!-- Mobile sidebar toggle -->
-      <button class="ctrl-btn" id="mob-sidebar-btn" onclick="toggleSidebar()" style="display:none;" aria-label="Channels">
-        <i class="fa-solid fa-bars"></i>
-      </button>
-      <div class="logo-icon">WC</div>
-      <div class="logo-text">
-        <div class="main"><span>KUFA</span>TV</div>
-        <div class="sub">Live · FIFA 2026</div>
+<!-- HEADER -->
+<header id="hdr">
+  <button class="icn-btn" id="mob-menu-btn" onclick="toggleSidebar()" aria-label="Channels">
+    <i class="fa-solid fa-bars-staggered"></i>
+  </button>
+  <a class="logo" href="#">
+    <div class="logo-mark">GS</div>
+    <div class="logo-text">
+      <div class="logo-name"><em>Goal</em>Stream</div>
+      <div class="logo-sub">FIFA World Cup 2026</div>
+    </div>
+  </a>
+
+  <!-- Ticker -->
+  <div id="ticker-shell">
+    <div class="ticker-badge"><div class="live-pip"></div><span>LIVE</span></div>
+    <div class="ticker-track" id="ticker-inner">
+      <span style="font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--text-4);padding:0 20px;">CONNECTING TO LIVE DATA…</span>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <button class="nav-btn on" id="tab-watch" onclick="setView('watch')"><i class="fa-solid fa-circle-play"></i> Watch</button>
+    <button class="nav-btn" id="tab-hub" onclick="setView('hub')"><i class="fa-solid fa-trophy"></i> Standings</button>
+  </div>
+</header>
+
+<!-- BODY -->
+<div id="body-row">
+  <div id="mob-scrim" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-hd">
+      <div class="sidebar-top">
+        <h2><i class="fa-solid fa-tower-broadcast"></i> CHANNELS</h2>
+        <span class="ch-badge" id="ch-count">0</span>
+      </div>
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="ch-search" placeholder="Search channels…" oninput="drawChannels()">
+      </div>
+      <div class="cat-row" id="cat-row"></div>
+    </div>
+    <div id="ch-list"></div>
+  </aside>
+
+  <!-- CENTER -->
+  <div id="center">
+
+    <!-- TV PANEL -->
+    <div id="tv-panel">
+      <div id="player-zone">
+
+        <!-- Player -->
+        <div id="player-wrap">
+          <video id="player-video" controls autoplay playsinline></video>
+          <iframe id="player-iframe" allowfullscreen allow="autoplay; fullscreen; encrypted-media" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" scrolling="no"></iframe>
+
+          <!-- Overlay -->
+          <div id="player-overlay">
+            <div class="loader-ring"></div>
+            <div id="overlay-msg">CONNECTING TO STREAM</div>
+          </div>
+
+          <!-- Controls -->
+          <div id="ctrl-bar">
+            <div class="ctrl-cluster">
+              <button class="icn-btn" id="btn-mute" onclick="toggleMute()"><i class="fa-solid fa-volume-high"></i></button>
+              <input type="range" class="vol-range" id="vol-range" min="0" max="1" step="0.04" value="0.85" oninput="setVol(this.value)">
+            </div>
+            <div class="live-tag">
+              <div class="live-pip"></div>
+              <span>LIVE BROADCAST</span>
+            </div>
+            <div class="ctrl-cluster">
+              <button class="icn-btn" id="btn-fs" onclick="doFullscreen()" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+            </div>
+          </div>
+        </div><!-- /player-wrap -->
+
+        <!-- Info bar -->
+        <div id="info-bar">
+          <div class="now-card">
+            <div class="now-logo" id="now-logo"><i class="fa-solid fa-satellite-dish" style="color:var(--gold);font-size:14px;"></i></div>
+            <div>
+              <div class="now-lbl">Now Streaming</div>
+              <div class="now-name" id="now-name">TRT — FIFA 2026</div>
+            </div>
+          </div>
+          <div class="stats-card">
+            <div class="stat-seg">
+              <div class="stat-lbl">Proxy</div>
+              <div class="stat-val" id="s-proxy" style="color:var(--text-4);">OFF</div>
+            </div>
+            <div class="stat-seg">
+              <div class="stat-lbl">API</div>
+              <div class="stat-val" id="s-api" style="color:var(--text-4);">—</div>
+            </div>
+            <div class="stat-seg">
+              <div class="stat-lbl">Refresh</div>
+              <div class="stat-val" id="s-refresh" style="color:var(--gold);font-size:10px;">5s</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /player-zone -->
+
+      <!-- Inline matches (tablet/mobile) -->
+      <div id="inline-matches">
+        <div id="inline-inner">
+          <div class="empty" style="min-width:100%;"><i class="fa-solid fa-futbol"></i><p>FETCHING MATCHES…</p></div>
+        </div>
+      </div>
+
+      <!-- RIGHT DRAWER (desktop) -->
+      <aside id="drawer">
+        <div class="drawer-hd">
+          <h3><i class="fa-solid fa-futbol"></i> LIVE MATCHES</h3>
+          <div class="refresh-indicator"><div class="refresh-dot"></div><span id="refresh-label">5s</span></div>
+        </div>
+        <div id="drawer-list">
+          <div class="empty"><i class="fa-solid fa-satellite-dish"></i><p>CONNECTING…</p></div>
+        </div>
+      </aside>
+    </div><!-- /tv-panel -->
+
+    <!-- HUB PANEL -->
+    <div id="hub-panel">
+      <div class="hub-title"><i class="fa-solid fa-trophy"></i> World Cup 2026 Standings</div>
+      <div class="hub-grid" id="hub-grid">
+        <div class="empty" style="grid-column:1/-1;"><i class="fa-solid fa-circle-notch fa-spin"></i><p>LOADING…</p></div>
       </div>
     </div>
 
-    <!-- Ticker -->
-    <div id="ticker-wrap">
-      <div class="ticker-label">
-        <div class="live-dot"></div>
-        <span>LIVE</span>
-      </div>
-      <div class="ticker-scroll" id="ticker-belt">
-        <span style="font-family:var(--font-h);font-size:11px;letter-spacing:0.1em;color:var(--text-faint);">CONNECTING TO LIVE DATA…</span>
-      </div>
-    </div>
+  </div><!-- /center -->
+</div><!-- /body-row -->
 
-    <div class="nav-tabs">
-      <button class="nav-tab active" id="tab-tv" onclick="switchView('tv')">
-        <i class="fa-solid fa-play-circle"></i> Watch
-      </button>
-      <button class="nav-tab" id="tab-hub" onclick="switchView('hub')">
-        <i class="fa-solid fa-trophy"></i> Standings
-      </button>
-    </div>
-  </header>
+<!-- MOBILE NAV -->
+<nav id="mob-nav">
+  <button class="mob-btn on" id="mob-watch" onclick="mobTab('watch')"><i class="fa-solid fa-circle-play"></i>Watch</button>
+  <button class="mob-btn" id="mob-chs" onclick="toggleSidebar()"><i class="fa-solid fa-tower-broadcast"></i>Channels</button>
+  <button class="mob-btn" id="mob-hub" onclick="mobTab('hub')"><i class="fa-solid fa-trophy"></i>Standings</button>
+</nav>
 
-  <!-- ═══ BODY ═══ -->
-  <div id="body">
-
-    <!-- Overlay for mobile sidebar -->
-    <div id="mob-overlay" onclick="closeSidebar()"></div>
-
-    <!-- ═══ LEFT SIDEBAR ═══ -->
-    <aside id="sidebar">
-      <div class="sidebar-head">
-        <div class="sidebar-title">
-          <h2><i class="fa-solid fa-signal"></i> Channels</h2>
-          <span class="ch-count" id="channel-counter">0</span>
-        </div>
-        <div class="search-bar">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="channel-search" placeholder="Search channels…" oninput="drawChannels()">
-        </div>
-        <div class="cat-chips" id="cat-chips"></div>
-      </div>
-      <div id="channels-list"></div>
-    </aside>
-
-    <!-- ═══ CENTER ═══ -->
-    <div id="center">
-
-      <!-- TV PANEL -->
-      <div id="tv-panel">
-
-        <!-- Player area -->
-        <div id="player-area">
-
-          <!-- Player frame -->
-          <div id="player-frame">
-            <!-- HLS video -->
-            <video id="tv-video-player" class="w-full h-full" controls autoplay playsinline style="display:block;"></video>
-            <!-- iFrame fallback -->
-            <iframe id="tv-iframe-player" allowfullscreen allow="autoplay; fullscreen" scrolling="no"></iframe>
-
-            <!-- Loading overlay -->
-            <div id="stream-overlay">
-              <div class="spin-ring"></div>
-              <div id="overlay-label">CONNECTING TO STREAM…</div>
-            </div>
-
-            <!-- Hover controls -->
-            <div id="player-controls">
-              <div class="vol-group">
-                <button class="ctrl-btn" id="btn-vol" onclick="toggleAudio()">
-                  <i class="fa-solid fa-volume-high"></i>
-                </button>
-                <input type="range" class="vol-slider" id="vol-slider" min="0" max="1" step="0.05" value="0.8" oninput="setVolume(this.value)">
-              </div>
-              <div class="stream-status-pill">
-                <div class="live-dot"></div>
-                LIVE BROADCAST
-              </div>
-              <button class="ctrl-btn" onclick="goFullscreen()">
-                <i class="fa-solid fa-expand"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Info bar -->
-          <div id="info-bar">
-            <div class="active-channel-card">
-              <div class="acc-logo" id="acc-logo">
-                <i class="fa-solid fa-satellite-dish" style="color:var(--gold);font-size:14px;"></i>
-              </div>
-              <div class="acc-meta">
-                <div class="acc-label">Now Streaming</div>
-                <div class="acc-name" id="acc-name">TRT World</div>
-              </div>
-            </div>
-            <div class="stat-pill">
-              <div class="stat-item">
-                <div class="stat-label">Proxy</div>
-                <div class="stat-val" id="proxy-status">OFF</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">API</div>
-                <div class="stat-val" id="api-status">—</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Inline matches (tablet / mobile) -->
-        <div id="inline-matches">
-          <div id="inline-matches-inner">
-            <div class="empty-state" style="min-width:100%;">
-              <i class="fa-solid fa-futbol"></i>
-              <p>FETCHING MATCH DATA…</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right drawer (desktop only) -->
-        <aside id="match-drawer">
-          <div class="drawer-head">
-            <h3><i class="fa-solid fa-futbol"></i> Live Matches</h3>
-          </div>
-          <div id="drawer-list">
-            <div class="empty-state">
-              <i class="fa-solid fa-futbol"></i>
-              <p>CONNECTING TO MATCH DATA…</p>
-            </div>
-          </div>
-        </aside>
-      </div>
-
-      <!-- STANDINGS HUB -->
-      <div id="hub-panel">
-        <div class="hub-inner">
-          <div class="hub-title">
-            <i class="fa-solid fa-trophy"></i> World Cup 2026 Standings
-          </div>
-          <div class="standings-grid" id="standings-grid">
-            <div class="empty-state" style="grid-column:1/-1;">
-              <i class="fa-solid fa-circle-notch fa-spin"></i>
-              <p>LOADING STANDINGS…</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /center -->
-
-  </div><!-- /body -->
-
-  <!-- ═══ MOBILE BOTTOM NAV ═══ -->
-  <nav id="mobile-nav">
-    <button class="mob-nav-btn active" id="mobtab-tv" onclick="mobileTab('tv')">
-      <i class="fa-solid fa-play-circle"></i>
-      Watch
-    </button>
-    <button class="mob-nav-btn" id="mobtab-ch" onclick="toggleSidebar()">
-      <i class="fa-solid fa-signal"></i>
-      Channels
-    </button>
-    <button class="mob-nav-btn" id="mobtab-hub" onclick="mobileTab('hub')">
-      <i class="fa-solid fa-trophy"></i>
-      Standings
-    </button>
-  </nav>
-
-</div><!-- /app -->
+</div><!-- /shell -->
 
 <script>
-// ══════════════════════════════════════════
-// CHANNEL DATA
-// ══════════════════════════════════════════
-const channelData = [
-  {
-    id: "trt-default",
-    name: "TRT World",
-    category: "News",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/TRT_World_logo.svg/240px-TRT_World_logo.svg.png",
-    number: "00",
-    // iframe embed for this source since it uses an external player
-    isEmbed: true,
-    url: "https://veotest.bbvplayline1a.com/video.html?url=https://rxne77juptdeyke3tytvgqwyh.medya.trt.com.tr/master.m3u8"
-  },
-  {
-    id: "12305",
-    name: "Caze TV Brasil",
-    category: "Sports",
-    logo: "https://stream.codecloud.bd/uploads/logos/logo_6a2a39c4ac184.png",
-    number: "01",
-    url: "https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8"
-  },
-  {
-    id: "12317",
-    name: "FIFA Plus 🏆",
-    category: "Sports",
-    logo: "https://i.ibb.co.com/vnbkF0r/fifa-world-cup-2026-logo-png-seeklogo-665644.png",
-    number: "02",
-    url: "https://37b4c228.wurl.com/manifest/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWZyX0ZJRkFQbHVzRnJlbmNoX0hMUw/6f5437c5-e015-4754-8476-c8c6d27d3a55/1.m3u8"
-  },
-  {
-    id: "12307",
-    name: "Bein Sports XTRA",
-    category: "Sports",
-    logo: "https://imglink.cc/cdn/kIiut6WBq0.jpg",
-    number: "03",
-    url: "https://amg01334-amg01334c2-freelivesports-emea-6791.playouts.now.amagi.tv/playlist/amg01334-beinxtra-beinxtrausapp-freelivesportsemea/playlist.m3u8"
-  },
-  {
-    id: "12318",
-    name: "FIFA+ Argentina",
-    category: "Sports",
-    logo: "https://i.ibb.co.com/vnbkF0r/fifa-world-cup-2026-logo-png-seeklogo-665644.png",
-    number: "04",
-    url: "https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8"
-  },
-  {
-    id: "12308",
-    name: "FIFA+ English",
-    category: "Sports",
-    logo: "https://stream.codecloud.bd/uploads/logos/logo_6a2a34c03f4a.png",
-    number: "05",
-    url: "https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8"
-  },
-  {
-    id: "12452",
-    name: "BBC Earth",
-    category: "Documentary",
-    logo: "https://imglink.cc/cdn/eEZmseF3Tb.jpg",
-    number: "06",
-    url: "https://amg00793-amg00793c6-xumo-us-2669.playouts.now.amagi.tv/BBCStudios-BBCEarthA-hls/playlist540p.m3u8"
-  },
-  {
-    id: "test1",
-    name: "Test Feed (Mux)",
-    category: "Test",
-    logo: "",
-    number: "07",
-    url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-  }
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const CHANNELS = [
+  {id:'trt',name:'TRT — FIFA 2026',cat:'Sports',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/TRT_World_logo.svg/240px-TRT_World_logo.svg.png',num:'00',embed:true,url:'https://veotest.bbvplayline1a.com/video.html?url=https://rxne77juptdeyke3tytvgqwyh.medya.trt.com.tr/master.m3u8'},
+  {id:'caze',name:'Caze TV Brasil',cat:'Sports',logo:'https://stream.codecloud.bd/uploads/logos/logo_6a2a39c4ac184.png',num:'01',url:'https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8'},
+  {id:'fifafr',name:'FIFA+ French',cat:'Sports',logo:'https://i.ibb.co.com/vnbkF0r/fifa-world-cup-2026-logo-png-seeklogo-665644.png',num:'02',url:'https://37b4c228.wurl.com/manifest/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWZyX0ZJRkFQbHVzRnJlbmNoX0hMUw/6f5437c5-e015-4754-8476-c8c6d27d3a55/1.m3u8'},
+  {id:'bein',name:'Bein Sports XTRA',cat:'Sports',logo:'https://imglink.cc/cdn/kIiut6WBq0.jpg',num:'03',url:'https://amg01334-amg01334c2-freelivesports-emea-6791.playouts.now.amagi.tv/playlist/amg01334-beinxtra-beinxtrausapp-freelivesportsemea/playlist.m3u8'},
+  {id:'fifaes',name:'FIFA+ Argentina',cat:'Sports',logo:'https://i.ibb.co.com/vnbkF0r/fifa-world-cup-2026-logo-png-seeklogo-665644.png',num:'04',url:'https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8'},
+  {id:'fifaen',name:'FIFA+ English',cat:'Sports',logo:'https://stream.codecloud.bd/uploads/logos/logo_6a2a34c03f4a.png',num:'05',url:'https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8'},
+  {id:'bbc',name:'BBC Earth',cat:'Documentary',logo:'https://imglink.cc/cdn/eEZmseF3Tb.jpg',num:'06',url:'https://amg00793-amg00793c6-xumo-us-2669.playouts.now.amagi.tv/BBCStudios-BBCEarthA-hls/playlist540p.m3u8'},
+  {id:'test',name:'Test Feed',cat:'Test',logo:'',num:'07',url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'}
 ];
 
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════
 // STATE
-// ══════════════════════════════════════════
-let activeChannelId = null;
-let hlsInstance = null;
-let selectedCategory = "All";
-let liveEventsData = [];
-let standingsData = [];
-let currentView = 'tv';
-let sidebarOpen = false;
+// ═══════════════════════════════════════════
+let activeCh = null, hlsInst = null;
+let selCat = 'All', sidebarOpen = false, curView = 'watch';
+let liveEvents = [], standings = [];
 
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════
 // BOOT
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════
 window.onload = () => {
-  setupResponsive();
-  setupCategories();
+  buildResponsive();
+  buildCats();
   drawChannels();
+  setTimeout(() => playChannel('trt'), 300);
 
-  // Auto-play default (TRT embed)
-  setTimeout(() => playChannel("trt-default"), 400);
-
-  fetchLiveScoreboard();
+  fetchScores();
   fetchStandings();
-  setInterval(fetchLiveScoreboard, 30000);
+  // 5-second refresh for scores
+  setInterval(fetchScores, 5000);
+  // Standings refresh every 30s
+  setInterval(fetchStandings, 30000);
 
-  window.addEventListener('resize', setupResponsive);
+  window.addEventListener('resize', buildResponsive);
+
+  // Countdown display
+  let cd = 5;
+  setInterval(() => {
+    cd = cd <= 1 ? 5 : cd - 1;
+    const el1 = document.getElementById('s-refresh');
+    const el2 = document.getElementById('refresh-label');
+    if(el1) el1.textContent = cd + 's';
+    if(el2) el2.textContent = cd + 's';
+  }, 1000);
 };
 
-function setupResponsive() {
-  const mob = window.innerWidth <= 900;
-  const btn = document.getElementById('mob-sidebar-btn');
-  if (btn) btn.style.display = mob ? 'flex' : 'none';
+function buildResponsive() {
+  const mob = window.innerWidth <= 860;
+  document.getElementById('mob-menu-btn').style.display = mob ? 'flex' : 'none';
 }
 
-// ══════════════════════════════════════════
-// VIEWS
-// ══════════════════════════════════════════
-function switchView(v) {
-  currentView = v;
-  const tvPanel  = document.getElementById('tv-panel');
-  const hubPanel = document.getElementById('hub-panel');
-  const tabTv    = document.getElementById('tab-tv');
-  const tabHub   = document.getElementById('tab-hub');
-
-  if (v === 'tv') {
-    tvPanel.style.display  = 'flex';
-    hubPanel.classList.remove('show');
-    tabTv.classList.add('active');
-    tabHub.classList.remove('active');
+// ═══════════════════════════════════════════
+// VIEW SWITCHING
+// ═══════════════════════════════════════════
+function setView(v) {
+  curView = v;
+  const tvp = document.getElementById('tv-panel');
+  const hub = document.getElementById('hub-panel');
+  const tw = document.getElementById('tab-watch');
+  const th = document.getElementById('tab-hub');
+  if(v === 'watch') {
+    tvp.style.display = ''; hub.classList.remove('on');
+    tw.classList.add('on'); th.classList.remove('on');
   } else {
-    tvPanel.style.display  = 'none';
-    hubPanel.classList.add('show');
-    tabTv.classList.remove('active');
-    tabHub.classList.add('active');
-    renderStandingsHub();
+    tvp.style.display = 'none'; hub.classList.add('on');
+    tw.classList.remove('on'); th.classList.add('on');
+    renderHub();
   }
 }
-
-function mobileTab(v) {
-  // update mobile nav active
-  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
-  if (v === 'tv') {
-    document.getElementById('mobtab-tv').classList.add('active');
-    switchView('tv');
-  } else {
-    document.getElementById('mobtab-hub').classList.add('active');
-    switchView('hub');
-  }
-  if (sidebarOpen) closeSidebar();
+function mobTab(v) {
+  document.querySelectorAll('.mob-btn').forEach(b => b.classList.remove('on'));
+  if(v === 'watch') { document.getElementById('mob-watch').classList.add('on'); setView('watch'); }
+  else { document.getElementById('mob-hub').classList.add('on'); setView('hub'); }
+  if(sidebarOpen) closeSidebar();
 }
 
-// ══════════════════════════════════════════
-// SIDEBAR TOGGLE (MOBILE)
-// ══════════════════════════════════════════
-function toggleSidebar() {
-  sidebarOpen ? closeSidebar() : openSidebar();
-}
+// ═══════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════
+function toggleSidebar() { sidebarOpen ? closeSidebar() : openSidebar(); }
 function openSidebar() {
   sidebarOpen = true;
   document.getElementById('sidebar').classList.add('open');
-  document.getElementById('mob-overlay').classList.add('visible');
-  document.getElementById('mobtab-ch').classList.add('active');
+  document.getElementById('mob-scrim').classList.add('on');
+  document.getElementById('mob-chs').classList.add('on');
 }
 function closeSidebar() {
   sidebarOpen = false;
   document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('mob-overlay').classList.remove('visible');
-  document.getElementById('mobtab-ch').classList.remove('active');
+  document.getElementById('mob-scrim').classList.remove('on');
+  document.getElementById('mob-chs').classList.remove('on');
 }
 
-// ══════════════════════════════════════════
-// CHANNEL UI
-// ══════════════════════════════════════════
-function setupCategories() {
-  const cats = ["All", ...new Set(channelData.map(c => c.category))];
-  document.getElementById('cat-chips').innerHTML = cats.map(cat => `
-    <button class="cat-chip ${cat === selectedCategory ? 'active' : ''}" onclick="setCategory('${cat}')">
-      ${cat}
-    </button>
+// ═══════════════════════════════════════════
+// CHANNELS
+// ═══════════════════════════════════════════
+function buildCats() {
+  const cats = ['All', ...new Set(CHANNELS.map(c => c.cat))];
+  document.getElementById('cat-row').innerHTML = cats.map(c => `
+    <button class="cat-pill ${c===selCat?'on':''}" onclick="setCat('${c}')">${c}</button>
   `).join('');
 }
-
-function setCategory(cat) {
-  selectedCategory = cat;
-  setupCategories();
-  drawChannels();
-}
-
+function setCat(c) { selCat = c; buildCats(); drawChannels(); }
 function drawChannels() {
-  const q = document.getElementById('channel-search').value.toLowerCase();
-  const filtered = channelData.filter(c => {
-    const matchCat  = selectedCategory === 'All' || c.category === selectedCategory;
-    const matchSearch = c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q);
-    return matchCat && matchSearch;
+  const q = document.getElementById('ch-search').value.toLowerCase();
+  const filt = CHANNELS.filter(c => {
+    const mc = selCat==='All' || c.cat===selCat;
+    const ms = c.name.toLowerCase().includes(q) || c.cat.toLowerCase().includes(q);
+    return mc && ms;
   });
-
-  document.getElementById('channel-counter').textContent = filtered.length;
-
-  document.getElementById('channels-list').innerHTML = filtered.length
-    ? filtered.map(c => `
-      <div class="ch-item ${c.id === activeChannelId ? 'active' : ''}" onclick="playChannel('${c.id}'); if(sidebarOpen) closeSidebar();">
-        <div class="ch-logo">
-          ${c.logo
-            ? `<img src="${c.logo}" alt="${c.name}" onerror="this.parentElement.innerHTML='<i class=\\"fa-solid fa-tv ch-logo-ph\\"></i>'">`
-            : `<i class="fa-solid fa-tv ch-logo-ph"></i>`}
-        </div>
-        <div class="ch-info">
-          <div class="ch-name">${c.name}</div>
-          <div class="ch-cat">${c.category}</div>
-        </div>
-        <span class="ch-num">${c.number}</span>
-        <span class="ch-live-dot ${c.id === activeChannelId ? 'on' : 'off'}"></span>
+  document.getElementById('ch-count').textContent = filt.length;
+  document.getElementById('ch-list').innerHTML = filt.length ? filt.map(c => `
+    <div class="ch-row ${c.id===activeCh?'on':''}" onclick="playChannel('${c.id}');if(sidebarOpen)closeSidebar();">
+      <div class="ch-thumb">
+        ${c.logo ? `<img src="${c.logo}" alt="" onerror="this.parentElement.innerHTML='<i class=ch-thumb-ph></i>'">` : '<i class="fa-solid fa-tv ch-thumb-ph"></i>'}
       </div>
-    `).join('')
-    : `<div class="empty-state"><i class="fa-solid fa-search"></i><p>NO CHANNELS FOUND</p></div>`;
+      <div class="ch-meta">
+        <div class="ch-nm">${c.name}</div>
+        <div class="ch-cat">${c.cat}</div>
+      </div>
+      <div class="ch-side">
+        <span class="ch-num">${c.num}</span>
+        <span class="ch-dot ${c.id===activeCh?'live':'off'}"></span>
+      </div>
+    </div>
+  `).join('') : '<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><p>NO RESULTS</p></div>';
 }
 
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════
 // PLAYER
-// ══════════════════════════════════════════
-function playChannel(id, useProxy = false) {
-  const ch = channelData.find(c => c.id === id);
-  if (!ch) return;
-
-  activeChannelId = id;
+// ═══════════════════════════════════════════
+function playChannel(id, useProxy=false) {
+  const ch = CHANNELS.find(c=>c.id===id);
+  if(!ch) return;
+  activeCh = id;
   drawChannels();
 
-  // Update info bar
-  const accLogoEl = document.getElementById('acc-logo');
-  accLogoEl.innerHTML = ch.logo
-    ? `<img src="${ch.logo}" alt="${ch.name}" onerror="this.style.display='none'">`
-    : `<i class="fa-solid fa-satellite-dish" style="color:var(--gold);font-size:14px;"></i>`;
-  document.getElementById('acc-name').textContent = ch.name;
+  // Info bar
+  const nl = document.getElementById('now-logo');
+  nl.innerHTML = ch.logo ? `<img src="${ch.logo}" alt="">` : '<i class="fa-solid fa-satellite-dish" style="color:var(--gold);font-size:14px;"></i>';
+  document.getElementById('now-name').textContent = ch.name;
 
-  const overlay = document.getElementById('stream-overlay');
-  const overlayLabel = document.getElementById('overlay-label');
-  const proxyStatus = document.getElementById('proxy-status');
-  const video = document.getElementById('tv-video-player');
-  const iframe = document.getElementById('tv-iframe-player');
+  const overlay = document.getElementById('player-overlay');
+  const msg     = document.getElementById('overlay-msg');
+  const sp      = document.getElementById('s-proxy');
+  const video   = document.getElementById('player-video');
+  const iframe  = document.getElementById('player-iframe');
 
-  // Show overlay
-  overlay.style.opacity = '1';
-  overlay.style.pointerEvents = 'auto';
-  overlayLabel.textContent = useProxy ? 'ROUTING VIA PROXY…' : `TUNING: ${ch.name.toUpperCase()}`;
-  proxyStatus.textContent = useProxy ? 'ON' : 'OFF';
-  proxyStatus.style.color = useProxy ? 'var(--gold)' : 'var(--green)';
+  overlay.style.opacity = '1'; overlay.style.pointerEvents = 'auto';
+  msg.textContent = useProxy ? 'REROUTING VIA PROXY…' : 'CONNECTING TO STREAM';
+  sp.textContent = useProxy ? 'ON' : 'OFF';
+  sp.style.color = useProxy ? 'var(--gold)' : 'var(--text-4)';
 
-  // Destroy existing HLS
-  if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+  if(hlsInst) { hlsInst.destroy(); hlsInst = null; }
 
-  // ── EMBED / IFRAME MODE ──
-  if (ch.isEmbed) {
-    video.style.display = 'none';
-    video.src = '';
+  const hideOverlay = () => { overlay.style.opacity='0'; overlay.style.pointerEvents='none'; };
+
+  // EMBED mode
+  if(ch.embed) {
+    video.style.display = 'none'; video.src = '';
     iframe.style.display = 'block';
     iframe.src = ch.url;
-    iframe.onload = () => {
-      overlay.style.opacity = '0';
-      overlay.style.pointerEvents = 'none';
-    };
-    // Fallback hide overlay after 3s
-    setTimeout(() => {
-      overlay.style.opacity = '0';
-      overlay.style.pointerEvents = 'none';
-    }, 3000);
+    setTimeout(hideOverlay, 2500);
     return;
   }
 
-  // ── HLS MODE ──
-  iframe.style.display = 'none';
-  iframe.src = '';
+  // HLS mode
+  iframe.style.display = 'none'; iframe.src = '';
   video.style.display = 'block';
+  let url = useProxy ? 'https://corsproxy.io/?'+encodeURIComponent(ch.url) : ch.url;
 
-  let streamUrl = ch.url;
-  if (useProxy) streamUrl = 'https://corsproxy.io/?' + encodeURIComponent(streamUrl);
-
-  const hideOverlay = () => {
-    overlay.style.opacity = '0';
-    overlay.style.pointerEvents = 'none';
-  };
-
-  if (Hls.isSupported()) {
-    hlsInstance = new Hls({ enableWorker: true, lowLatencyMode: true });
-    hlsInstance.loadSource(streamUrl);
-    hlsInstance.attachMedia(video);
-
-    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-      video.play().catch(() => {});
-      hideOverlay();
-    });
-
-    hlsInstance.on(Hls.Events.ERROR, (evt, data) => {
-      if (data.fatal) {
-        if (data.type === Hls.ErrorTypes.NETWORK_ERROR && !useProxy) {
-          overlayLabel.textContent = 'CORS BLOCK — REROUTING…';
-          setTimeout(() => playChannel(id, true), 1200);
-        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-          hlsInstance.recoverMediaError();
+  if(Hls.isSupported()) {
+    hlsInst = new Hls({enableWorker:true,lowLatencyMode:true});
+    hlsInst.loadSource(url);
+    hlsInst.attachMedia(video);
+    hlsInst.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); hideOverlay(); });
+    hlsInst.on(Hls.Events.ERROR, (e,d) => {
+      if(d.fatal) {
+        if(d.type===Hls.ErrorTypes.NETWORK_ERROR && !useProxy) {
+          msg.textContent = 'CORS BLOCK — REROUTING…';
+          setTimeout(()=>playChannel(id,true),1200);
+        } else if(d.type===Hls.ErrorTypes.MEDIA_ERROR) {
+          hlsInst.recoverMediaError();
         } else {
-          overlayLabel.textContent = 'STREAM UNREACHABLE';
-          hlsInstance.destroy();
+          msg.textContent = 'STREAM UNAVAILABLE';
         }
       }
     });
-  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = streamUrl;
+  } else if(video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = url;
     video.onloadedmetadata = () => { video.play(); hideOverlay(); };
   }
 }
 
-// ══════════════════════════════════════════
-// AUDIO CONTROLS
-// ══════════════════════════════════════════
-function toggleAudio() {
-  const video = document.getElementById('tv-video-player');
-  const btn   = document.getElementById('btn-vol');
-  video.muted = !video.muted;
-  btn.innerHTML = video.muted
-    ? `<i class="fa-solid fa-volume-xmark" style="color:var(--red2)"></i>`
-    : `<i class="fa-solid fa-volume-high"></i>`;
+// ═══════════════════════════════════════════
+// AUDIO
+// ═══════════════════════════════════════════
+function toggleMute() {
+  const v = document.getElementById('player-video');
+  const b = document.getElementById('btn-mute');
+  v.muted = !v.muted;
+  b.innerHTML = v.muted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+  if(v.muted) b.classList.add('active-state'); else b.classList.remove('active-state');
+}
+function setVol(val) {
+  const v = document.getElementById('player-video');
+  v.volume = val; v.muted = false;
+  document.getElementById('btn-mute').innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+  document.getElementById('btn-mute').classList.remove('active-state');
 }
 
-function setVolume(v) {
-  const video = document.getElementById('tv-video-player');
-  video.volume = v;
-  video.muted = false;
-  document.getElementById('btn-vol').innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-}
+// ═══════════════════════════════════════════
+// FULLSCREEN — wraps the entire player-wrap
+// ═══════════════════════════════════════════
+function doFullscreen() {
+  const wrap = document.getElementById('player-wrap');
+  const activeEl = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
 
-function goFullscreen() {
-  const v = document.getElementById('tv-video-player');
-  if (v.requestFullscreen) v.requestFullscreen();
-  else if (v.webkitRequestFullscreen) v.webkitRequestFullscreen();
-}
-
-// ══════════════════════════════════════════
-// ESPN LIVE SCOREBOARD
-// ══════════════════════════════════════════
-async function fetchLiveScoreboard() {
-  try {
-    const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard');
-    if (!res.ok) throw new Error('Bad response');
-    const data = await res.json();
-    liveEventsData = data.events || [];
-    document.getElementById('api-status').textContent = 'LIVE';
-    document.getElementById('api-status').style.color = 'var(--green)';
-    renderTicker();
-    renderMatchDrawer();
-    renderInlineMatches();
-  } catch (e) {
-    document.getElementById('api-status').textContent = 'ERR';
-    document.getElementById('api-status').style.color = 'var(--red2)';
+  if(activeEl) {
+    // Exit fullscreen
+    const exitFn = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen;
+    if(exitFn) exitFn.call(document);
+    document.getElementById('btn-fs').innerHTML = '<i class="fa-solid fa-expand"></i>';
+  } else {
+    // Enter fullscreen on the wrapper div
+    const reqFn = wrap.requestFullscreen || wrap.webkitRequestFullscreen || wrap.mozRequestFullScreen;
+    if(reqFn) {
+      reqFn.call(wrap).catch(()=>{
+        // fallback: fullscreen the video itself
+        const vid = document.getElementById('player-video');
+        if(vid.requestFullscreen) vid.requestFullscreen();
+        else if(vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
+      });
+      document.getElementById('btn-fs').innerHTML = '<i class="fa-solid fa-compress"></i>';
+    }
   }
 }
 
+// Listen for fullscreen change to update icon
+document.addEventListener('fullscreenchange', updateFsIcon);
+document.addEventListener('webkitfullscreenchange', updateFsIcon);
+function updateFsIcon() {
+  const inFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  document.getElementById('btn-fs').innerHTML = inFs ? '<i class="fa-solid fa-compress"></i>' : '<i class="fa-solid fa-expand"></i>';
+}
+
+// ═══════════════════════════════════════════
+// ESPN API — 5 second refresh
+// ═══════════════════════════════════════════
+async function fetchScores() {
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard',{cache:'no-store'});
+    if(!r.ok) throw 0;
+    const d = await r.json();
+    liveEvents = d.events || [];
+    const sa = document.getElementById('s-api');
+    sa.textContent = 'LIVE'; sa.style.color = 'var(--emerald)';
+    renderTicker();
+    renderDrawer();
+    renderInline();
+  } catch {
+    const sa = document.getElementById('s-api');
+    sa.textContent = 'ERR'; sa.style.color = 'var(--crimson)';
+  }
+}
 async function fetchStandings() {
   try {
-    const res = await fetch('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
-    if (!res.ok) return;
-    const data = await res.json();
-    standingsData = data.children || [];
-    if (currentView === 'hub') renderStandingsHub();
-  } catch (e) {}
+    const r = await fetch('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings',{cache:'no-store'});
+    if(!r.ok) return;
+    const d = await r.json();
+    standings = d.children || [];
+    if(curView==='hub') renderHub();
+  } catch {}
 }
 
-// ── TICKER ──
+// Ticker
 function renderTicker() {
-  const belt = document.getElementById('ticker-belt');
-  if (!liveEventsData.length) {
-    belt.innerHTML = `<span style="font-family:var(--font-h);font-size:11px;letter-spacing:0.1em;color:var(--text-faint);padding:0 20px;">NO LIVE MATCHES DETECTED</span>`;
+  const el = document.getElementById('ticker-inner');
+  if(!liveEvents.length) {
+    el.innerHTML = '<span style="font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--text-4);padding:0 20px;">NO LIVE MATCHES DETECTED — WORLD CUP 2026</span>';
     return;
   }
-  const items = liveEventsData.map(ev => {
-    const c = ev.competitions[0];
-    const t1 = c.competitors[0];
-    const t2 = c.competitors[1];
-    const isLive = ev.status.type.state === 'in';
-    return `<span style="display:inline-flex;align-items:center;gap:10px;padding:0 20px;font-family:var(--font-h);font-size:11px;font-weight:600;">
-      <span style="color:var(--gold);letter-spacing:0.08em;">${ev.shortName}</span>
-      <span style="color:var(--text);">${t1.team.abbreviation} <span style="color:var(--gold);font-size:14px;">${t1.score}–${t2.score}</span> ${t2.team.abbreviation}</span>
-      <span style="color:${isLive ? 'var(--red2)' : 'var(--text-faint)'};">${ev.status.displayClock}</span>
+  const html = liveEvents.map(ev => {
+    const c=ev.competitions[0],t1=c.competitors[0],t2=c.competitors[1];
+    const live=ev.status.type.state==='in';
+    return `<span style="display:inline-flex;align-items:center;gap:9px;padding:0 18px;font-size:11px;font-weight:700;">
+      <span style="color:var(--gold);letter-spacing:0.06em;">${ev.shortName}</span>
+      <span style="color:var(--text-2);">${t1.team.abbreviation} <span style="color:var(--gold);font-size:14px;font-family:var(--mono);">${t1.score}–${t2.score}</span> ${t2.team.abbreviation}</span>
+      <span style="color:${live?'var(--crimson)':'var(--text-4)'};">${ev.status.displayClock}</span>
     </span>`;
-  }).join('<span style="color:var(--border);padding:0 4px;">·</span>');
-  belt.innerHTML = items + '<span style="color:var(--border);padding:0 4px;">·</span>' + items;
+  }).join('<span style="color:rgba(255,255,255,0.12);padding:0 6px;">⬥</span>');
+  el.innerHTML = html + '<span style="color:rgba(255,255,255,0.12);padding:0 6px;">⬥</span>' + html;
 }
 
-// ── MATCH DRAWER (desktop right panel) ──
-function renderMatchDrawer() {
-  const parent = document.getElementById('drawer-list');
-  if (!liveEventsData.length) {
-    parent.innerHTML = `<div class="empty-state"><i class="fa-solid fa-futbol"></i><p>NO DATA / OFF-SEASON</p></div>`;
-    return;
-  }
-  parent.innerHTML = liveEventsData.map(ev => {
-    const c = ev.competitions[0];
-    const t1 = c.competitors[0];
-    const t2 = c.competitors[1];
-    const state = ev.status.type.state;
-    const statusClass = state === 'in' ? 'live' : state === 'post' ? 'done' : 'sched';
-    return `
-      <div class="match-card">
-        <div class="match-card-head">
-          <span class="match-league">${ev.name}</span>
-          <span class="match-status ${statusClass}">${ev.status.type.shortDetail}</span>
+// Drawer
+function renderDrawer() {
+  const p = document.getElementById('drawer-list');
+  if(!liveEvents.length) { p.innerHTML = '<div class="empty"><i class="fa-solid fa-futbol"></i><p>NO DATA / OFF-SEASON</p></div>'; return; }
+  p.innerHTML = liveEvents.map(ev => {
+    const c=ev.competitions[0],t1=c.competitors[0],t2=c.competitors[1];
+    const st=ev.status.type.state;
+    const cls=st==='in'?'live':st==='post'?'done':'pre';
+    return `<div class="match-card">
+      <div class="match-hd">
+        <span class="match-comp">${ev.name}</span>
+        <span class="match-pill ${cls}">${ev.status.type.shortDetail}</span>
+      </div>
+      <div class="match-body">
+        <div class="match-team">
+          <img src="${t1.team.logo||''}" alt="" onerror="this.style.display='none'">
+          <div class="match-team-nm">${t1.team.shortDisplayName}</div>
         </div>
-        <div class="match-teams">
-          <div class="match-team">
-            <img src="${t1.team.logo || ''}" alt="${t1.team.shortDisplayName}" onerror="this.style.display='none'">
-            <div class="match-team-name">${t1.team.shortDisplayName}</div>
-          </div>
-          <div class="match-score">${t1.score}–${t2.score}</div>
-          <div class="match-team">
-            <img src="${t2.team.logo || ''}" alt="${t2.team.shortDisplayName}" onerror="this.style.display='none'">
-            <div class="match-team-name">${t2.team.shortDisplayName}</div>
-          </div>
+        <div class="match-score">${t1.score}–${t2.score}</div>
+        <div class="match-team">
+          <img src="${t2.team.logo||''}" alt="" onerror="this.style.display='none'">
+          <div class="match-team-nm">${t2.team.shortDisplayName}</div>
         </div>
       </div>
-    `;
+    </div>`;
   }).join('');
 }
 
-// ── INLINE MATCHES (mobile/tablet horizontal scroll) ──
-function renderInlineMatches() {
-  const parent = document.getElementById('inline-matches-inner');
-  if (!liveEventsData.length) {
-    parent.innerHTML = `<div class="empty-state" style="min-width:100%;"><i class="fa-solid fa-futbol"></i><p>NO MATCHES</p></div>`;
-    return;
-  }
-  parent.innerHTML = liveEventsData.map(ev => {
-    const c = ev.competitions[0];
-    const t1 = c.competitors[0];
-    const t2 = c.competitors[1];
-    const isLive = ev.status.type.state === 'in';
-    return `
-      <div class="mini-match">
-        <div class="mini-match-score">${t1.score} – ${t2.score}</div>
-        <div class="mini-match-teams">${t1.team.abbreviation} vs ${t2.team.abbreviation}</div>
-        <div class="mini-match-status ${isLive ? 'live' : 'sched'}">${ev.status.type.shortDetail}</div>
-      </div>
-    `;
+// Inline
+function renderInline() {
+  const p = document.getElementById('inline-inner');
+  if(!liveEvents.length) { p.innerHTML = '<div class="empty" style="min-width:100%;"><i class="fa-solid fa-futbol"></i><p>NO MATCHES</p></div>'; return; }
+  p.innerHTML = liveEvents.map(ev => {
+    const c=ev.competitions[0],t1=c.competitors[0],t2=c.competitors[1];
+    const st=ev.status.type.state;
+    const cls=st==='in'?'live':st==='post'?'done':'pre';
+    return `<div class="mini-card">
+      <div class="mini-sc">${t1.score}–${t2.score}</div>
+      <div class="mini-teams">${t1.team.abbreviation} vs ${t2.team.abbreviation}</div>
+      <div class="mini-st ${cls}">${ev.status.type.shortDetail}</div>
+    </div>`;
   }).join('');
 }
 
-// ── STANDINGS ──
-function renderStandingsHub() {
-  const parent = document.getElementById('standings-grid');
-  if (!standingsData.length) {
-    parent.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-circle-notch fa-spin"></i><p>STANDINGS LOADING…</p></div>`;
-    // Try fetching again if empty
+// Standings
+function renderHub() {
+  const p = document.getElementById('hub-grid');
+  if(!standings.length) {
+    p.innerHTML = '<div class="empty" style="grid-column:1/-1;"><i class="fa-solid fa-circle-notch fa-spin"></i><p>LOADING STANDINGS…</p></div>';
     fetchStandings();
     return;
   }
-  parent.innerHTML = standingsData.map(group => {
-    const teams = group.standings?.entries || [];
-    const stat = (t, name) => t.stats?.find(s => s.name === name)?.value ?? '—';
-    return `
-      <div class="group-card">
-        <div class="group-name">${group.name}</div>
-        <table class="group-table">
-          <thead>
-            <tr>
-              <th colspan="2">Club</th>
-              <th>W</th><th>D</th><th>L</th><th>Pts</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${teams.map((t, i) => `
-              <tr>
-                <td>${i+1}</td>
-                <td>
-                  <div class="team-cell">
-                    <img src="${t.team.logos?.[0]?.href || ''}" alt="${t.team.displayName}" onerror="this.style.display='none'">
-                    <span>${t.team.displayName}</span>
-                  </div>
-                </td>
-                <td style="text-align:right;color:var(--text-dim);">${stat(t,'wins')}</td>
-                <td style="text-align:right;color:var(--text-dim);">${stat(t,'ties')}</td>
-                <td style="text-align:right;color:var(--text-dim);">${stat(t,'losses')}</td>
-                <td class="pts" style="text-align:right;">${stat(t,'points')}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
+  const stat = (t,n) => t.stats?.find(s=>s.name===n)?.value ?? '—';
+  p.innerHTML = standings.map(grp => {
+    const teams = grp.standings?.entries || [];
+    return `<div class="grp-card">
+      <div class="grp-nm">${grp.name}</div>
+      <table class="grp-table">
+        <thead><tr><th>#</th><th style="text-align:left;">Club</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
+        <tbody>${teams.map((t,i) => `<tr>
+          <td class="pos">${i+1}</td>
+          <td><div class="team-cell"><img src="${t.team.logos?.[0]?.href||''}" onerror="this.style.display='none'"><span>${t.team.displayName}</span></div></td>
+          <td>${stat(t,'wins')}</td><td>${stat(t,'ties')}</td><td>${stat(t,'losses')}</td>
+          <td class="pts">${stat(t,'points')}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
   }).join('');
 }
 </script>
