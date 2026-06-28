@@ -225,6 +225,32 @@ button{cursor:pointer;border:none;background:none;color:inherit}
 .row .skel{width:160px;height:240px}
 
 /* Grid */
+/* Genre chips + language strip (for Movies/TV grid) */
+.chips,.lang-strip{display:flex;gap:6px;padding:12px 24px 6px;overflow-x:auto}
+.chip{
+  padding:7px 14px;border-radius:50px;
+  font-size:12px;font-weight:500;
+  background:var(--bg3);border:1px solid var(--brd);
+  color:var(--sub);cursor:pointer;
+  transition:var(--trans);white-space:nowrap;flex-shrink:0;
+  user-select:none;
+}
+.chip:hover{color:#fff;border-color:var(--brass-brd)}
+.chip:active{transform:scale(.96)}
+.chip.on{background:var(--brass);color:#000;border-color:var(--brass);font-weight:700}
+.ls{
+  padding:6px 13px;border-radius:50px;
+  font-size:10px;font-weight:700;
+  background:var(--bg3);border:1px solid var(--brd);
+  color:var(--sub);cursor:pointer;
+  transition:var(--trans);white-space:nowrap;flex-shrink:0;
+  letter-spacing:.5px;text-transform:uppercase;
+  user-select:none;
+}
+.ls:hover{color:#fff;border-color:var(--brass-brd)}
+.ls:active{transform:scale(.96)}
+.ls.on{background:var(--brass);color:#000;border-color:var(--brass)}
+
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:0 24px}
 .grid .skel{height:240px}
 .empty{grid-column:1/-1;text-align:center;padding:80px 0;color:var(--sub);font-size:14px}
@@ -604,6 +630,35 @@ button{cursor:pointer;border:none;background:none;color:inherit}
 
       <!-- Movies / TV tab -->
       <div id="tab-grid" style="display:none">
+        <!-- Genre chips + language strip (restored from v1) -->
+        <div class="chips scroll-x" id="genreChips">
+          <div class="chip on" onclick="setGenre(0,this)">All</div>
+          <div class="chip" onclick="setGenre(28,this)">Action</div>
+          <div class="chip" onclick="setGenre(18,this)">Drama</div>
+          <div class="chip" onclick="setGenre(35,this)">Comedy</div>
+          <div class="chip" onclick="setGenre(53,this)">Thriller</div>
+          <div class="chip" onclick="setGenre(27,this)">Horror</div>
+          <div class="chip" onclick="setGenre(878,this)">Sci-Fi</div>
+          <div class="chip" onclick="setGenre(10749,this)">Romance</div>
+          <div class="chip" onclick="setGenre(16,this)">Animation</div>
+          <div class="chip" onclick="setGenre(99,this)">Documentary</div>
+          <div class="chip" onclick="setGenre(10751,this)">Family</div>
+        </div>
+        <div class="lang-strip scroll-x" id="langStrip">
+          <div class="ls on" onclick="setLang('',this)">All</div>
+          <div class="ls" onclick="setLang('ml',this)">ML · Malayalam</div>
+          <div class="ls" onclick="setLang('en',this)">EN · English</div>
+          <div class="ls" onclick="setLang('ta',this)">TA · Tamil</div>
+          <div class="ls" onclick="setLang('hi',this)">HI · Hindi</div>
+          <div class="ls" onclick="setLang('te',this)">TE · Telugu</div>
+          <div class="ls" onclick="setLang('kn',this)">KN · Kannada</div>
+          <div class="ls" onclick="setLang('ko',this)">KO · Korean</div>
+          <div class="ls" onclick="setLang('ja',this)">JA · Japanese</div>
+          <div class="ls" onclick="setLang('es',this)">ES · Spanish</div>
+          <div class="ls" onclick="setLang('fr',this)">FR · French</div>
+          <div class="ls" onclick="setLang('ar',this)">AR · Arabic</div>
+          <div class="ls" onclick="setLang('zh',this)">ZH · Chinese</div>
+        </div>
         <div class="section">
           <div class="section-head">
             <div class="section-title" id="gridTitle">Movies</div>
@@ -702,7 +757,7 @@ button{cursor:pointer;border:none;background:none;color:inherit}
       <p class="modal-desc" id="infoDesc"></p>
       <div class="modal-genres" id="infoGenres"></div>
       <div class="modal-btns">
-        <button class="btn-play" onclick="startPlayer(currentInfo);closeInfo()">
+        <button class="btn-play" onclick="startPlayer(S.currentInfo);closeInfo()">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           Play Now
         </button>
@@ -733,7 +788,7 @@ button{cursor:pointer;border:none;background:none;color:inherit}
       <div class="spinner"></div>
       <p id="playerLoadText">Loading stream...</p>
     </div>
-    <iframe id="playerFrame" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write" referrerpolicy="no-referrer" allowfullscreen></iframe>
+    <iframe id="playerFrame" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write" referrerpolicy="no-referrer"></iframe>
     <video id="playerVideo" style="display:none" playsinline controls></video>
     <div class="subtitle-overlay" id="subOverlay"></div>
     <div class="sub-panel" id="subPanel">
@@ -1048,7 +1103,15 @@ async function initGrid(type) {
   document.getElementById('gridTitle').innerHTML = type==='tv' ? '📺 <em>TV Shows</em>' : '🎬 <em>Movies</em>';
   document.getElementById('gridEl').innerHTML = Array(12).fill('<div class="skel" style="height:240px"></div>').join('');
   document.getElementById('loadMoreBtn').style.display = 'none';
+  // Reset genre/language chip selection to match state when switching tabs
+  syncChipSelection();
+  await loadGridPage();
+}
+
+async function loadGridPage() {
+  const type = S.gridType;
   const params = {sort_by:'popularity.desc'};
+  if (S.genre) params.with_genres = S.genre;
   if (S.lang) params.with_original_language = S.lang;
   const [p1, p2] = await Promise.all([
     api(`/discover/${type}`, {...params, page:1}),
@@ -1058,6 +1121,40 @@ async function initGrid(type) {
   S.gridPage = 0;
   document.getElementById('gridCount').textContent = S.gridData.length + ' titles';
   renderGrid();
+}
+
+function syncChipSelection() {
+  // Highlight the active genre chip
+  document.querySelectorAll('#genreChips .chip').forEach(c => c.classList.remove('on'));
+  document.querySelectorAll('#genreChips .chip').forEach(c => {
+    if (c.textContent.trim() === 'All' && S.genre === 0) c.classList.add('on');
+    else if (c.onclick && c.onclick.toString().includes(`setGenre(${S.genre}`)) c.classList.add('on');
+  });
+  // Highlight the active language chip
+  document.querySelectorAll('#langStrip .ls').forEach(l => l.classList.remove('on'));
+  document.querySelectorAll('#langStrip .ls').forEach(l => {
+    if (l.onclick && l.onclick.toString().includes(`setLang('${S.lang}'`)) l.classList.add('on');
+  });
+}
+
+function setGenre(g, el) {
+  S.genre = g;
+  document.querySelectorAll('#genreChips .chip').forEach(c => c.classList.remove('on'));
+  if (el) el.classList.add('on');
+  // Reload the grid with new filter
+  document.getElementById('gridEl').innerHTML = Array(8).fill('<div class="skel" style="height:240px"></div>').join('');
+  loadGridPage();
+}
+
+function setLang(lang, el) {
+  S.lang = lang;
+  document.querySelectorAll('#langStrip .ls').forEach(l => l.classList.remove('on'));
+  if (el) el.classList.add('on');
+  // Reload grid if we're on a grid tab
+  if (S.tab === 'movies' || S.tab === 'tv') {
+    document.getElementById('gridEl').innerHTML = Array(8).fill('<div class="skel" style="height:240px"></div>').join('');
+    loadGridPage();
+  }
 }
 
 function renderGrid() {
